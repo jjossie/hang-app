@@ -1,5 +1,3 @@
-from mimetypes import init
-from operator import mod
 from django.db import models
 
 # Create your models here.
@@ -11,8 +9,9 @@ class Option(models.Model):
 
     optionText = models.CharField(max_length=400)
     score = models.FloatField(default=0.0)
-    author = models.OneToOneField("User", on_delete=models.CASCADE, related_name="author", primary_key=False)
-    usersVoted = models.ForeignKey("User", on_delete=models.CASCADE)
+    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author", primary_key=False)
+    # usersVoted = models.ForeignKey("User", on_delete=models.CASCADE, null=True) # TODO figure this out
+    decision = models.ForeignKey("Decision", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Option: {self.optionText} with score {self.score}"
@@ -50,7 +49,7 @@ class Option(models.Model):
 class Decision(models.Model):
 
     decisionText = models.CharField(max_length=400)
-    options = models.ForeignKey("Option", on_delete=models.CASCADE)
+    session = models.ForeignKey("Session", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Decision: {self.decisionText}"
@@ -86,25 +85,16 @@ class User(models.Model):
 
     username = models.CharField(max_length=100)
 
-    def __init__(self) -> None:
-        self.username = ""
-
-    def __init__(self, username) -> None:
-        self.username = username
-
     def __str__(self):
         return self.username
 
 
 class Session(models.Model):
 
-    users = models.ForeignKey(User, on_delete=models.CASCADE)
-    decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
+    # users = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    # decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
     creator = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True, related_name="creator")
-
-    def __init__(self, creator) -> None:
-        self.creator = creator
 
     def __str__(self):
         return f"Session created by {self.creator}"
@@ -136,7 +126,6 @@ def main_test():
     session = Session(u1)
     session.joinUser(u1)
     session.joinUser(u2)
-    # print(session.generateID())
 
     o1 = Option("Taco Bell", u1)
     o2 = Option("McDonald's", u2)
