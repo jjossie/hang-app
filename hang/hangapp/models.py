@@ -1,67 +1,62 @@
 from mimetypes import init
+from operator import mod
 from django.db import models
 
 # Create your models here.
 
 
-class Session():
+class Option(models.Model):
 
-    lastId = 1
+    _authorBiasFactor = 0.8
 
-    def __init__(self, creator) -> None:
-        self.userlist = []
-        self.decisionlist = []
-        self.creator = creator
-
-    def __str__(self):
-        return f"Session created by {self.creator}"
-
-    def joinUser(self, user):
-        self.userlist.append(user)
-
-    def addDecision(self, decision):
-        self.decisionlist.append(decision)
-        decision.setParentSession(self)
-
-    def getUsers(self):
-        return self.userlist
-
-    def generateID(self) -> int:
-        Session.lastId += 1
-        val = hash(Session.lastId)
-        print(val)
-        return val
-
-    
-
-class User:
-    
-    def __init__(self) -> None:
-        self.name = ""
-        
-    def __init__(self, name) -> None:
-        self.name = name
+    optionText = models.CharField(max_length=400)
+    score = models.FloatField(default=0.0)
+    author = models.OneToOneField("User", on_delete=models.CASCADE, related_name="author", primary_key=False)
+    usersVoted = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f"Option: {self.optionText} with score {self.score}"
 
-class Decision:
+    def vote(self, user, inFavor=None):
+        '''The given user votes on this choice. Yes if inFavor is True, 
+        no if it is False, or neutral if undefined.'''
+        if inFavor is None:
+            voteWeight = 0
+        else:
+            voteWeight = 1 if inFavor else -1 
+        if (user == self.author): # make sure this equality operator works
+            voteWeight *= Option._authorBiasFactor
+        # TODO check to see if this user has voted already and raise an error if so
+        # TODO add the user to the usersVoted list
+        self.score += voteWeight
+        self.save()
 
-    def __init__(self) -> None:
-        self.prompt = ""
+    def getScore(self):
+        return self.score
 
-    def __init__(self, prompt) -> None:
-        self.prompt = prompt
-        self.options = []
+    def votingFinished(self):
+        # TODO Fix this function because it will not work rn
+        users = set(User.objects.all())
+        # for user in users:
+        usersVoted = set()
+        for vote in self.votes:
+            usersVoted.add(vote[0])
+
+        print(users)
+        print(usersVoted)
+        return usersVoted == users # TODO figure out if this part works
+
+
+class Decision(models.Model):
+
+    decisionText = models.CharField(max_length=400)
+    options = models.ForeignKey("Option", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.prompt
+        return f"Decision: {self.decisionText}"
 
-    def setParentSession(self, parent):
-        self.parentSession = parent
 
-    def getParentSession(self):
-        return self.parentSession
+    ''' TODO Fix all of these functions'''
 
     def addOption(self, option):
         self.options.append(option)
@@ -83,72 +78,55 @@ class Decision:
         for option in self.options:
             if not option.votingComplete():
                 return False
-        
+
         return True
 
 
-class Option:
+class User(models.Model):
 
-    _authorBiasFactor = 0.8
+    username = models.CharField(max_length=100)
 
-    def __init__(self, name, author) -> None:
-        self.name = name
-        self.score = 0 
-        self.votes = []
-        self.score = 0
-        self.author = author
-    
+    def __init__(self) -> None:
+        self.username = ""
+
+    def __init__(self, username) -> None:
+        self.username = username
+
     def __str__(self):
-        return f"Option: {self.name} with score {self.score}"
+        return self.username
 
-    def setParentDecision(self, parent):
-        self.parentDecision = parent
 
-    def getParentDecision(self):
-        return self.parentDecision
+class Session(models.Model):
 
-    def _vote(self, user, value):
-        # check to see if this user has voted already and raise an error if so
-        self.votes.append((user, value))
-        self.score += value
+    users = models.ForeignKey(User, on_delete=models.CASCADE)
+    decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
+    creator = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True, related_name="creator")
 
-    def voteYes(self, user):
-        if user == self.author:
-            self._vote(user, 1 * Option._authorBiasFactor)
-        else:
-            self._vote(user, 1)
+    def __init__(self, creator) -> None:
+        self.creator = creator
 
-    def voteNo(self, user):
-        if user == self.author:
-            self._vote(user, -1 * Option._authorBiasFactor)
-        else:
-            self._vote(user, -1)
+    def __str__(self):
+        return f"Session created by {self.creator}"
 
-    def voteNeutral(self, user):
-        self._vote(user, 0)
-    
-    def getScore(self):
-        sum = 0
-        for vote in self.votes:
-            sum += vote[1]
-        assert sum == self.score
-        return self.score
+    def joinUser(self, user):
+        self.userlist.append(user)
 
-    def votingFinished(self):
-        users = set(self.parentDecision.getParentSession().getUsers())
-        # for user in users:
-        usersVoted = set()
-        for vote in self.votes:
-            usersVoted.add(vote[0])
-        
+    def addDecision(self, decision):
+        self.decisionlist.append(decision)
+        decision.setParentSession(self)
 
-        print(users)
-        print(usersVoted)
-        return usersVoted == users
-        
+    def getUsers(self):
+        return self.userlist
+
+    # def generateID(self) -> int:
+    #     Session.lastId += 1
+    #     val = hash(Session.lastId)
+    #     print(val)
+    #     return val
+
 
 def main_test():
-
 
     u1 = User("Tony")
     u2 = User("Steve")
@@ -158,14 +136,12 @@ def main_test():
     session = Session(u1)
     session.joinUser(u1)
     session.joinUser(u2)
-    print(session.generateID())
+    # print(session.generateID())
 
     o1 = Option("Taco Bell", u1)
     o2 = Option("McDonald's", u2)
     o3 = Option("The Hickory", u1)
     o4 = Option("Wendy's", u1)
-    
-
 
     question = Decision("Where should we eat?")
     session.addDecision(question)
@@ -194,7 +170,7 @@ def main_test():
     o3.voteYes(u2)
     o3.voteNeutral(u3)
     o3.voteYes(u4)
-    
+
     o4.voteYes(u1)
     o4.voteNo(u2)
     o4.voteNo(u3)
@@ -207,7 +183,6 @@ def main_test():
     # print(question.getWinner())
 
     print(o1.votingFinished())
-
 
 
 if __name__ == '__main__':
