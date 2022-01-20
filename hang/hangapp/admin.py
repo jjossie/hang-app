@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Decision, Option, User, Session
+
+admin.site.register(Decision)
+admin.site.register(Option)
+admin.site.register(User)
+admin.site.register(Session)
