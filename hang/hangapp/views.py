@@ -1,6 +1,6 @@
 from http.client import HTTPResponse
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from .models import Session, User, Decision, Option
 
 # Create your views here.
@@ -16,4 +16,4 @@ def start_session(request):
 def vote(request, decision_id):
     # This will be shown to each user to go through all the options to a decision
     
-    render(request, 'hangapp/vote.html', {'decision': decision_id})
+    return render(request, 'hangapp/vote.html', {'decision': decision_id})
