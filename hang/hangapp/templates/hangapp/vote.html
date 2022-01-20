@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,11 +6,43 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
+    <title>Vote on {{decision.decisionText}} | Hangapp</title>
 </head>
 
 <body>
-    {{ decision }}
+
+    <script>
+        function vote(voteCode, optionId){
+            switch(voteCode){
+                case "0":
+                    write("voted no", `${optionId}out`);
+                case "1":
+                    write("voted neutral", `${optionId}out`);
+                case "2":
+                    write("voted yes", `${optionId}out`);
+                default:
+                    write("what", `${optionId}out`);
+            }
+        }
+        function write(text, id){
+            document.getElementById(id).innerHTML = text;
+        }
+    </script>
+    <div class="decision mainDiv">
+        <h2>{{ decision.decisionText }}</h2>
+        <ul>
+            {% for option in decision.option_set.all %}
+            <div class="option">
+                <span class="optionText">{{option.optionText}}</span><br>
+                <button class="voteButton" onclick="vote(0, {{option.id}})">No</button>
+                <button class="voteButton" onclick="vote(1, {{option.id}})">idc</button>
+                <button class="voteButton" onclick="vote(2, {{option.id}})">Yes</button>
+                <div id="{{option.id}}out"></div>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
 
 </body>
 

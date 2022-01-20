@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
+    <title>Welcome | Hangapp</title>
+</head>
+
+<body>
+    <div class="mainDiv">
+        <h1>Welcome</h1>
+        <p>Enter your name to get started.</p>
+
+        <form action="{% url 'startSession' 1 %}" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <input type="text" name="usernameInput" id="usernameInput">
+                <label for="usernameInput">Username</label><br>
+            </fieldset>
+            <input type="submit" value="Start a Session">
+        </form>
+    </div>
+</body>
+
+</html>

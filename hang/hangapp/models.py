@@ -108,12 +108,10 @@ class Session(models.Model):
 
     def getUsers(self):
         return self.userlist
+    
+    def getInviteLink(self):
 
-    # def generateID(self) -> int:
-    #     Session.lastId += 1
-    #     val = hash(Session.lastId)
-    #     print(val)
-    #     return val
+        pass
 
 
 def main_test():
@@ -172,7 +170,6 @@ def main_test():
     # print(question.getWinner())
 
     print(o1.votingFinished())
-
 
 if __name__ == '__main__':
     main_test()
