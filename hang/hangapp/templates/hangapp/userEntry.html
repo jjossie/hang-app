@@ -15,10 +15,10 @@
         <h1>Welcome</h1>
         <p>Enter your name to get started.</p>
 
-        <form action="{% url 'startSession' 1 %}" method="post">
+        <form action="{% url 'makeUser' %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <input type="text" name="usernameInput" id="usernameInput">
+                <input type="text" name="username" id="usernameInput">
                 <label for="usernameInput">Username</label><br>
             </fieldset>
             <input type="submit" value="Start a Session">

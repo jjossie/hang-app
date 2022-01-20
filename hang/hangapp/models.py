@@ -114,6 +114,7 @@ class Session(models.Model):
         pass
 
 
+
 def main_test():
 
     u1 = User("Tony")
