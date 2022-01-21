@@ -8,7 +8,7 @@ from .models import Session, User, Decision, Option
 # Create your views here.
 
 def index(request):
-    return HttpResponse("Hello this is the home page yes thanks")
+    return HttpResponse("Hello yes this is the home page thanks")
 
 
 def userEntry(request):
