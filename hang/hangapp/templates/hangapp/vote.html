@@ -30,6 +30,7 @@
         }
     </script>
     <div class="decision mainDiv">
+        <h1>Voting as {{user}}</h1>
         <h2>{{ decision.decisionText }}</h2>
         <ul>
             {% for option in decision.option_set.all %}
@@ -42,6 +43,13 @@
             </div>
             {% endfor %}
         </ul>
+
+        <h3>Suggest: </h3>
+        <form action="{% url 'vote' decision.id user.id %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="optionText" id="addOptionTextBox">
+            <input type="submit" value="Add Suggestion">
+        </form>
     </div>
 
 </body>
