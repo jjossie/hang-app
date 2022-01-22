@@ -17,10 +17,7 @@
 
         <form action="{% url 'makeUser' %}" method="post">
             {% csrf_token %}
-            <fieldset>
-                <input type="text" name="username" id="usernameInput">
-                <label for="usernameInput">Username</label><br>
-            </fieldset>
+            <input type="text" name="username" id="usernameInput">
             <input type="submit" value="Start a Session">
         </form>
     </div>
