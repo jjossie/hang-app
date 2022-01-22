@@ -9,7 +9,7 @@ class Option(models.Model):
 
     optionText = models.CharField(max_length=400)
     score = models.FloatField(default=0.0)
-    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author", primary_key=False)
+    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author")
     # usersVoted = models.ForeignKey("User", on_delete=models.CASCADE, null=True) # TODO figure this out
     decision = models.ForeignKey("Decision", on_delete=models.CASCADE)
 
@@ -87,14 +87,14 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
+    pass
 
 
 class Session(models.Model):
 
     # users = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     # decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
-    creator = models.OneToOneField(
-        User, on_delete=models.CASCADE, primary_key=True, related_name="creator")
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
 
     def __str__(self):
         return f"Session created by {self.creator}"
@@ -110,67 +110,66 @@ class Session(models.Model):
         return self.userlist
     
     def getInviteLink(self):
-
         pass
 
 
 
-def main_test():
+# def main_test():
 
-    u1 = User("Tony")
-    u2 = User("Steve")
-    u3 = User("Peter")
-    u4 = User("Bruce")
+#     u1 = User("Tony")
+#     u2 = User("Steve")
+#     u3 = User("Peter")
+#     u4 = User("Bruce")
 
-    session = Session(u1)
-    session.joinUser(u1)
-    session.joinUser(u2)
+#     session = Session(u1)
+#     session.joinUser(u1)
+#     session.joinUser(u2)
 
-    o1 = Option("Taco Bell", u1)
-    o2 = Option("McDonald's", u2)
-    o3 = Option("The Hickory", u1)
-    o4 = Option("Wendy's", u1)
+#     o1 = Option("Taco Bell", u1)
+#     o2 = Option("McDonald's", u2)
+#     o3 = Option("The Hickory", u1)
+#     o4 = Option("Wendy's", u1)
 
-    question = Decision("Where should we eat?")
-    session.addDecision(question)
+#     question = Decision("Where should we eat?")
+#     session.addDecision(question)
 
-    question.addOption(o1)
-    question.addOption(o2)
-    question.addOption(o3)
-    question.addOption(o4)
+#     question.addOption(o1)
+#     question.addOption(o2)
+#     question.addOption(o3)
+#     question.addOption(o4)
 
-    print("Pre-voting: ")
+#     print("Pre-voting: ")
 
-    for option in question.getOptions():
-        print(option)
+#     for option in question.getOptions():
+#         print(option)
 
-    o1.voteYes(u1)
-    o1.voteYes(u2)
-    o1.voteNo(u3)
-    o1.voteNeutral(u4)
+#     o1.voteYes(u1)
+#     o1.voteYes(u2)
+#     o1.voteNo(u3)
+#     o1.voteNeutral(u4)
 
-    o2.voteNeutral(u1)
-    o2.voteNo(u2)
-    o2.voteNo(u3)
-    o2.voteNo(u4)
+#     o2.voteNeutral(u1)
+#     o2.voteNo(u2)
+#     o2.voteNo(u3)
+#     o2.voteNo(u4)
 
-    o3.voteNo(u1)
-    o3.voteYes(u2)
-    o3.voteNeutral(u3)
-    o3.voteYes(u4)
+#     o3.voteNo(u1)
+#     o3.voteYes(u2)
+#     o3.voteNeutral(u3)
+#     o3.voteYes(u4)
 
-    o4.voteYes(u1)
-    o4.voteNo(u2)
-    o4.voteNo(u3)
-    o4.voteNo(u4)
+#     o4.voteYes(u1)
+#     o4.voteNo(u2)
+#     o4.voteNo(u3)
+#     o4.voteNo(u4)
 
-    # print("\n\nPost-voting: ")
-    # for option in question.getOptions():
-    #     print(option)
-    # print("\n\nWinner:")
-    # print(question.getWinner())
+#     # print("\n\nPost-voting: ")
+#     # for option in question.getOptions():
+#     #     print(option)
+#     # print("\n\nWinner:")
+#     # print(question.getWinner())
 
-    print(o1.votingFinished())
+#     print(o1.votingFinished())
 
-if __name__ == '__main__':
-    main_test()
+# if __name__ == '__main__':
+#     main_test()

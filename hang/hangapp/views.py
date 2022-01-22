@@ -26,33 +26,40 @@ def makeUser(request):
     newUser = User.objects.create(username=username)
     newUser.save()
     try:
+        # Are we joining an existing session?
         sessionId= request.POST['sessionId']
     except:
         # No existing sessionID was provided, so we create a new one
         # with the newUser as the creator
         session = Session.objects.create(creator=newUser)
         session.save()
-        return HttpResponseRedirect(reverse('enterSession', args=(session.id,)))
-    return HttpResponseRedirect(reverse('enterSession', args=(sessionId,)))
+        response =  HttpResponseRedirect(reverse('enterSession', args=(session.id,)))
+        # response =  HttpResponseRedirect(reverse('enterSession', args=(session.id, newUser.id)))
+        # response.
+        return response
+    return HttpResponseRedirect(reverse('enterSession', args=(sessionId))) # Currently trying to figure out how to hand the user over.
+    # return HttpResponseRedirect(reverse('enterSession', args=(sessionId, newUser.id)))
     
 
 
-def enterSession(request, session_id):
+def enterSession(request, sessionId, userId):
     '''This is where a user will begin by creating questions and inviting people.'''
-    try:
-        userId = request.POST['userId']
-    except KeyError:
-        return HttpResponse("Error: no such user found")
+    # try:
+    #     userId = request.POST['userId']
+    # except KeyError:
+    #     return HttpResponse("Error: no such user found")
     try:
         user = User.objects.get(pk=userId)
     except:
         # create the new user
         user = User.objects.create("dummy")
-    session = get_object_or_404(Session, pk=session_id)
+    session = get_object_or_404(Session, pk=sessionId)
     return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
 
-def vote(request, decision_id):
+
+
+def vote(request, decisionId):
     # This will be shown to each user to go through all the options to a decision
-    decision = get_object_or_404(Decision, pk=decision_id)
+    decision = get_object_or_404(Decision, pk=decisionId)
     return render(request, 'hangapp/vote.html', {'decision': decision})
 
