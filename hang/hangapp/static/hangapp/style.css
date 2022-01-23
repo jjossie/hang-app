@@ -8,7 +8,7 @@ a{
     text-decoration:none;
     font-weight: bold;
 }
-form>input{
+form>input, button{
     display:block;
     margin:auto;
     padding: 15px;
@@ -17,12 +17,21 @@ form>input{
 button{
     padding: 5px;
 }
+.voteButton{
+    font-size:larger;
+}
 .mainDiv{
     width: 40%;
     margin: auto;
     background-color: floralwhite;
-    padding: 25px;
+    padding: 15px;
     border-radius: 10px;
+}
+.results{
+    text-align:center;
+}
+.results>h1{
+    font-size:36pt;
 }
 code{
     background-color: rgb(74, 82, 92);

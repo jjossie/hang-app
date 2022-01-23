@@ -20,13 +20,15 @@ class Option(models.Model):
     def vote(self, user, inFavor=None):
         '''The given user votes on this choice. Yes if inFavor is True, 
         no if it is False, or neutral if undefined.'''
+        if self.usersVoted.all().contains(user):
+            raise Exception('User has already voted')
+            
         if inFavor is None:
             voteWeight = 0
         else:
             voteWeight = 1 if inFavor else -1 
-        if (user == self.author): # make sure this equality operator works
+        if (user == self.author):
             voteWeight *= Option._authorBiasFactor
-        # TODO check to see if this user has voted already and raise an error if so
         self.usersVoted.add(user)
         self.score += voteWeight
         self.save()
@@ -93,9 +95,11 @@ class Session(models.Model):
 
     def joinUser(self, user):
         self.users.add(user)
+        print(f"Just added user {user.username} to session {self.id}")
+        print(self.users.all())
 
     def getInviteLink(self):
-        return reverse('newUserJoinSession', args=(self.id,))
+        return reverse('startUserWithSession', args=(self.id,))
 
 
 

@@ -36,28 +36,28 @@
         Voting is finished!
         <h2>{{ decision.decisionText }}</h2>
         <h3>Winner:</h3>
-        <h1>{{ decision.getWinner.optionText }}</h1>
-
-        <button id="button" onclick="show()">Show Detailed Results</button>
-
-        <div id="detailedResults" style="display:none">
-            <table id="detailedResultsTable">
-                <tr>
-                    <td><em>Option</em></td>
-                    <td><em>Score</em></td>
-                </tr>
-                {% for option in decision.option_set.all %}
-                <tr>
-                    <td>{{option.optionText}}</td>
-                    <td>{{option.score}}</td>
-                </tr>
-                {% endfor %}
-            </table>
+        <div class="results">
+            
+            <h1>{{ decision.getWinner.optionText }}</h1>
+            <button id="button" onclick="show()">Show Detailed Results</button>
+            <div id="detailedResults" style="display:none">
+                <table id="detailedResultsTable">
+                    <tr>
+                        <td><em>Option</em></td>
+                        <td><em>Score</em></td>
+                    </tr>
+                    {% for option in decision.option_set.all %}
+                    <tr>
+                        <td>{{option.optionText}}</td>
+                        <td>{{option.score}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% else %}
+            Waiting on others to vote. Try refreshing in a few.
+            {% endif %}
         </div>
-
-        {% else %}
-        Waiting on others to vote. Try refreshing in a few.
-        {% endif %}
     </div>
 </body>
 

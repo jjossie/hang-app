@@ -14,16 +14,15 @@
     <div class="mainDiv">
         <h1>Welcome</h1>
 
-        {% if session %}
-        <h2>Joining {{session}}</h2>
         <p>Enter your name to get started.</p>
+        {% if session %}
+        <em>Joining {{session}}</em>
         <form action="{% url 'newUserJoinSession' session.id %}" method="post">
             {% csrf_token %}
             <input type="text" name="username" id="usernameInput">
             <input type="submit" value="Start a Session">
         </form>
         {% else %}
-        <h2>Creating a new session</h2>
         <form action="{% url 'newUserNewSession' %}" method="post">
             {% csrf_token %}
             <input type="text" name="username" id="usernameInput">

@@ -13,29 +13,32 @@
 <body>
     <div class="mainDiv">
         <h1>Session started by {{session.creator.username}}</h1>
-        <h2>Voting as {{user.username}} </h2>
+        <em>Contributing as {{user.username}} </em>
 
+        <p>What are we deciding on?</p>
         {% for decision in session.decision_set.all %}
         <div class="decision">
-            <h3>{{decision.decisionText}}</h3>
+            <li>{{decision.decisionText}}</li>
         </div>
         {% endfor %}
 
         <form action="{% url 'addDecision' session.id user.id %}" method="POST">
             {% csrf_token %}
             <input type="text" name="decisionText" id="newDecisionBox">
-            <input type="submit" value="New Decision">
+            <input type="submit" value="Add Decision">
         </form>
-
-
+        
+        {% if session.decision_set.first %}
         <form action="{% url 'voteSession' session.id user.id %}" method="POST">
             {% csrf_token %}
             <input type="submit" value="Start Voting">
         </form>
-
+        
         <div class="shareableLink">
-            <a href="{{session.getInviteLink}}">
+            <p>Invite others! Right-click to copy and share with friends.</p>
+            <a target="_blank" href="{{session.getInviteLink}}">Invite Link</a>
         </div>
+        {% endif %}
 
     </div>
 </body>

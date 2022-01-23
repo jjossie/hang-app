@@ -30,8 +30,8 @@ def newUserJoinSession(request, sessionId):
         raise Http404(request, "No username for the new User was provided.")
     newUser = User.objects.create(username=username)
     newUser.save()
-    session = get_object_or_404(sessionId)
-    session.users.add(newUser)
+    session = get_object_or_404(Session, pk=sessionId)
+    session.joinUser(newUser)
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
 
 
@@ -43,19 +43,9 @@ def newUserNewSession(request):
     newUser = User.objects.create(username=username)
     newUser.save()
     session = Session.objects.create(creator=newUser)
-    session.users.add(newUser)
+    session.joinUser(newUser)
     session.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
-
-# def joinSessionExistingUser(request, userId):
-#     user = get_object_or_404(User, pk=userId)
-#     try:
-#         # Are we joining an existing session?
-#         sessionId= request.POST['sessionId']
-#         session = get_object_or_404(Session, pk=sessionId)
-#     except:
-#         raise Http404("Session not found")
-#     return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
 
 
 def addDecision(request, sessionId, userId):
@@ -71,21 +61,6 @@ def addDecision(request, sessionId, userId):
     newDecision = session.decision_set.create(decisionText=text)
     newDecision.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
-
-
-# def enterSession(request, sessionId, userId):
-#     '''This is where a user will begin by creating questions and inviting people.'''
-#     # try:
-#     #     userId = request.POST['userId']
-#     # except KeyError:
-#     #     return HttpResponse("Error: no such user found")
-#     try:
-#         user = User.objects.get(pk=userId)
-#     except:
-#         # create the new user
-#         user = User.objects.create("dummy")
-#     session = get_object_or_404(Session, pk=sessionId)
-#     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
 
 
 def voteSession(request, sessionId, userId):
@@ -108,14 +83,16 @@ def vote(request, optionId, userId):
     except:
         print("no vote led into this view")
         return render(request, 'hangapp/vote.html', {'option': option, 'user': user})
-        
-    # Vote on the option object
-    if voteOnOption == 'no':
-        option.vote(user, inFavor=False)
-    elif voteOnOption == 'yes':
-        option.vote(user, inFavor=True)
-    else:
-        option.vote(user)
+    try:
+        # Vote on the option object
+        if voteOnOption == 'no':
+            option.vote(user, inFavor=False)
+        elif voteOnOption == 'yes':
+            option.vote(user, inFavor=True)
+        else:
+            option.vote(user)
+    except:
+        print("Error: This user has already voted.")
 
     allOptions = option.decision.option_set.all()
     # This might be the most inefficient operation I've ever written
@@ -127,10 +104,6 @@ def vote(request, optionId, userId):
 
     if len(remainingOptions) == 0:
         # Go to results page
-        print("No remaining items, I think")
-        for option in allOptions:
-            print(f"{option}: \nUsersVoted: {option.usersVoted}")
-        # TODO render the results page!!
         return render(request, 'hangapp/results.html', {'decision': option.decision})
     else:
         return render(request, 'hangapp/vote.html', {'option': remainingOptions[0], 'user': user})
