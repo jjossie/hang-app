@@ -14,37 +14,45 @@ def index(request):
 def userEntry(request):
     ''' This is the entry point for all users. They enter their name 
     and specify whether they will be creating or joining a session.'''
-    return render(request, 'hangapp/userEntry.html')
+    return render(request, 'hangapp/start.html')
 
-def joinSessionNewUser(request):
-    print("finna make me a user!")
+
+def userEntryWithSession(request, sessionId):
+    session = get_object_or_404(Session, pk=sessionId)
+    return render(request, 'hangapp/start.html', {'session': session})
+
+
+def newUserJoinSession(request, sessionId):
     try:
         username = request.POST['username']
     except:
         raise Http404(request, "No username for the new User was provided.")
-    print(f"his name is {username}")
     newUser = User.objects.create(username=username)
     newUser.save()
+    session = get_object_or_404(sessionId)  
+    return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
+
+
+def newUserNewSession(request):
     try:
-        # Are we joining an existing session?
-        sessionId= request.POST['sessionId']
-        session = get_object_or_404(Session, pk=sessionId)
+        username = request.POST['username']
     except:
-        # No existing sessionID was provided, so we create a new one
-        # with the newUser as the creator
-        session = Session.objects.create(creator=newUser)
-        session.save()
-    return render(request, 'hangapp/enterSession.html', {'session': session, 'user': newUser})
+        raise Http404(request, "No username for the new User was provided.")
+    newUser = User.objects.create(username=username)
+    newUser.save()
+    session = Session.objects.create(creator=newUser)
+    session.save()
+    return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
     
-def joinSessionExistingUser(request, userId):
-    user = get_object_or_404(User, pk=userId)
-    try:
-        # Are we joining an existing session?
-        sessionId= request.POST['sessionId']
-        session = get_object_or_404(Session, pk=sessionId)
-    except:
-        raise Http404("Session not found")
-    return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
+# def joinSessionExistingUser(request, userId):
+#     user = get_object_or_404(User, pk=userId)
+#     try:
+#         # Are we joining an existing session?
+#         sessionId= request.POST['sessionId']
+#         session = get_object_or_404(Session, pk=sessionId)
+#     except:
+#         raise Http404("Session not found")
+#     return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
     
 
 def addDecision(request, sessionId, userId):
@@ -59,7 +67,7 @@ def addDecision(request, sessionId, userId):
     # newDecision = Decision.objects.create(decisionText=text, session=session)
     newDecision = session.decision_set.create(decisionText=text)
     newDecision.save()
-    return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
+    return render(request, 'hangapp/join.html', {'session': session, 'user': user})
 
 
 
@@ -75,7 +83,7 @@ def addDecision(request, sessionId, userId):
 #         # create the new user
 #         user = User.objects.create("dummy")
 #     session = get_object_or_404(Session, pk=sessionId)
-#     return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
+#     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
 
 
 

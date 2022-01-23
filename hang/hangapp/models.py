@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.urls import reverse
 # Create your models here.
 
 
@@ -110,7 +110,7 @@ class Session(models.Model):
         return self.userlist
     
     def getInviteLink(self):
-        pass
+        return reverse('newUserJoinSession', args=(self.id,))
 
 
 
