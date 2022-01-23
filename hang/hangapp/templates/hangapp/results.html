@@ -2,12 +2,32 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
     <title>Results | HangApp</title>
+
+    <script>
+        function show(){
+            results = document.getElementById('detailedResults');
+            results.style.display = "inline";
+            butt = document.getElementById('button');
+            butt.innerHTML = "Hide Detailed Results";
+            butt.onclick = hide;
+        }
+        function hide(){
+            results = document.getElementById('detailedResults');
+            results.style.display = "none";
+            butt = document.getElementById('button');
+            butt.innerHTML = "Show Detailed Results";
+            butt.onclick = show;        
+        }
+    </script>
 </head>
+
 <body>
     <div class="mainDiv">
         <h2>Results</h2>
@@ -18,9 +38,27 @@
         <h3>Winner:</h3>
         <h1>{{ decision.getWinner.optionText }}</h1>
 
+        <button id="button" onclick="show()">Show Detailed Results</button>
+
+        <div id="detailedResults" style="display:none">
+            <table id="detailedResultsTable">
+                <tr>
+                    <td><em>Option</em></td>
+                    <td><em>Score</em></td>
+                </tr>
+                {% for option in decision.option_set.all %}
+                <tr>
+                    <td>{{option.optionText}}</td>
+                    <td>{{option.score}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
         {% else %}
         Waiting on others to vote. Try refreshing in a few.
         {% endif %}
     </div>
 </body>
+
 </html>

@@ -56,9 +56,6 @@ class Decision(models.Model):
         self.options.append(option)
         option.setParentDecision(self)
 
-    def getOptions(self):
-        return self.options
-
     def getWinner(self):
         options = self.option_set.all()
         winner = options[0]
