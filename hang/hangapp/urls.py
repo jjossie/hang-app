@@ -11,4 +11,5 @@ urlpatterns = [
     path('suggest/<int:decisionId>/<int:userId>', views.suggest, name='suggest'),
     path('voteSession/<int:sessionId>/<int:userId>', views.voteSession, name='voteSession'),
     path('vote/<int:optionId>/<int:userId>', views.vote, name='vote'),
+    path('results/<int:decisionId>', views.results, name="results"),
 ]

@@ -35,16 +35,10 @@ class Option(models.Model):
         return self.score
 
     def votingFinished(self):
-        # TODO Fix this function because it will not work rn
-        users = set(User.objects.all())
-        # for user in users:
-        usersVoted = set()
-        for vote in self.votes:
-            usersVoted.add(vote[0])
-
-        print(users)
-        print(usersVoted)
-        return usersVoted == users # TODO figure out if this part works
+        usersInSession = self.decision.session.users.all()
+        print(f"Session: {usersInSession}")
+        print(f"This Option: {self.usersVoted.all()}")
+        return set(usersInSession) == set(self.usersVoted.all()) 
 
 
 class Decision(models.Model):
@@ -66,19 +60,18 @@ class Decision(models.Model):
         return self.options
 
     def getWinner(self):
-        winner = self.options[0]
-        for option in self.options:
+        options = self.option_set.all()
+        winner = options[0]
+        for option in options:
             score = option.getScore()
             if score > winner.getScore():
                 winner = option
-
         return winner
 
-    def isFinished(self) -> bool:
-        for option in self.options:
-            if not option.votingComplete():
+    def votingFinished(self) -> bool:
+        for option in self.option_set.all():
+            if not option.votingFinished():
                 return False
-
         return True
 
 
@@ -96,20 +89,14 @@ class Session(models.Model):
     # users = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     # decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
+    users = models.ManyToManyField(User)
 
     def __str__(self):
         return f"Session created by {self.creator}"
 
     def joinUser(self, user):
-        self.userlist.append(user)
+        self.users.add(user)
 
-    def addDecision(self, decision):
-        self.decisionlist.append(decision)
-        decision.setParentSession(self)
-
-    def getUsers(self):
-        return self.userlist
-    
     def getInviteLink(self):
         return reverse('newUserJoinSession', args=(self.id,))
 

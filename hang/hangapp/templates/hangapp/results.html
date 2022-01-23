@@ -1,0 +1,26 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
+    <title>Results | HangApp</title>
+</head>
+<body>
+    <div class="mainDiv">
+        <h2>Results</h2>
+
+        {% if decision.votingFinished %}
+        Voting is finished!
+        <h2>{{ decision.decisionText }}</h2>
+        <h3>Winner:</h3>
+        <h1>{{ decision.getWinner.optionText }}</h1>
+
+        {% else %}
+        Waiting on others to vote. Try refreshing in a few.
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -31,6 +31,7 @@ def newUserJoinSession(request, sessionId):
     newUser = User.objects.create(username=username)
     newUser.save()
     session = get_object_or_404(sessionId)
+    session.users.add(newUser)
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
 
 
@@ -42,6 +43,7 @@ def newUserNewSession(request):
     newUser = User.objects.create(username=username)
     newUser.save()
     session = Session.objects.create(creator=newUser)
+    session.users.add(newUser)
     session.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
 
@@ -129,6 +131,7 @@ def vote(request, optionId, userId):
         for option in allOptions:
             print(f"{option}: \nUsersVoted: {option.usersVoted}")
         # TODO render the results page!!
+        return render(request, 'hangapp/results.html', {'decision': option.decision})
     else:
         return render(request, 'hangapp/vote.html', {'option': remainingOptions[0], 'user': user})
 
@@ -149,3 +152,9 @@ def suggest(request, decisionId, userId):
     except:
         raise Http404(f"Failed to add option '{newOptionText}'")
     return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})
+
+
+
+def results(request, decisionId):
+    decision = get_object_or_404(Decision, pk=decisionId)
+    return render(request, 'hangapp/results.html', {'decision': decision})
