@@ -44,9 +44,9 @@
             <h3 class="option">{{option.optionText}}</h3>
             <form action="{% url 'vote' option.id user.id %}" method="POST">
                 {% csrf_token %}
-                <button name="no" value="0" id="">❎</button>
-                <button name="neutral" value="1" id="">🤷‍♂️</button>
-                <button name="yes" value="2" id="">✅</button>
+                <button name="vote" value="no" id="">❎</button>
+                <button name="vote" value="neutral" id="">🤷‍♂️</button>
+                <button name="vote" value="yes" id="">✅</button>
             </form>
         </div>
     </div>

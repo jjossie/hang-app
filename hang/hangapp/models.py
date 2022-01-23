@@ -12,6 +12,7 @@ class Option(models.Model):
     author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author")
     # usersVoted = models.ForeignKey("User", on_delete=models.CASCADE, null=True) # TODO figure this out
     decision = models.ForeignKey("Decision", on_delete=models.CASCADE)
+    usersVoted = models.ManyToManyField("User")
 
     def __str__(self):
         return f"Option: {self.optionText} with score {self.score}"
@@ -26,7 +27,7 @@ class Option(models.Model):
         if (user == self.author): # make sure this equality operator works
             voteWeight *= Option._authorBiasFactor
         # TODO check to see if this user has voted already and raise an error if so
-        # TODO add the user to the usersVoted list
+        self.usersVoted.add(user)
         self.score += voteWeight
         self.save()
 

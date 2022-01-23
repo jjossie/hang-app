@@ -98,14 +98,41 @@ def vote(request, optionId, userId):
     '''
     option = get_object_or_404(Option, pk=optionId)
     user = get_object_or_404(User, pk=userId)
-
-    # ******* DO SOMETHING HERE *******
-
-
     
+    # Get the vote if one was given
+    try:
+        voteOnOption = request.POST['vote']
+
+    except:
+        print("no vote led into this view")
+        return render(request, 'hangapp/vote.html', {'option': option, 'user': user})
+        
+    # Vote on the option object
+    if voteOnOption == 'no':
+        option.vote(user, inFavor=False)
+    elif voteOnOption == 'yes':
+        option.vote(user, inFavor=True)
+    else:
+        option.vote(user)
+
+    allOptions = option.decision.option_set.all()
+    # This might be the most inefficient operation I've ever written
+    remainingOptions = list(filter(lambda option:
+        not option.usersVoted.contains(user)
+    , allOptions))
+
+    print(remainingOptions)
+
+    if len(remainingOptions) == 0:
+        # Go to results page
+        print("No remaining items, I think")
+        for option in allOptions:
+            print(f"{option}: \nUsersVoted: {option.usersVoted}")
+        # TODO render the results page!!
+    else:
+        return render(request, 'hangapp/vote.html', {'option': remainingOptions[0], 'user': user})
 
 
-    return render(request, 'hangapp/vote.html', {'option': option, 'user': user})
 
 
 def suggest(request, decisionId, userId):
