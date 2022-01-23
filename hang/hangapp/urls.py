@@ -8,6 +8,7 @@ urlpatterns = [
     path('join', views.newUserNewSession, name='newUserNewSession'),
     path('join/<int:sessionId>', views.newUserJoinSession, name='newUserJoinSession'),
     path('addDecision/<int:sessionId>/<int:userId>', views.addDecision, name='addDecision'),
-    path('vote/<int:decisionId>/<int:userId>', views.vote, name='vote'),
+    path('suggest/<int:decisionId>/<int:userId>', views.suggest, name='suggest'),
     path('voteSession/<int:sessionId>/<int:userId>', views.voteSession, name='voteSession'),
+    path('vote/<int:optionId>/<int:userId>', views.vote, name='vote'),
 ]

@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
+    <title>Suggesting for {{decision.decisionText}}</title>
+</head>
+
+<body>
+    <div class="mainDiv">
+        <div class="decision mainDiv">
+            <h1>{{ decision.decisionText }}</h1>
+            <em>Suggesting as {{user}}</em>
+            <div class="option">
+                <ul>
+                    {% for option in decision.option_set.all %}
+                    <li class="optionText">{{option.optionText}}</li><br>
+                    {% comment %} <button class="voteButton" onclick="vote(0, {{option.id}})">No</button>
+                    <button class="voteButton" onclick="vote(1, {{option.id}})">idc</button>
+                    <button class="voteButton" onclick="vote(2, {{option.id}})">Yes</button>
+                    <div id="{{option.id}}out"></div> {% endcomment %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <h3>Suggest: </h3>
+            <form action="{% url 'suggest' decision.id user.id %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="optionText" id="addOptionTextBox">
+                <input type="submit" value="Add Suggestion">
+            </form>
+            {% if decision.option_set.first %}
+            <form action="{% url 'vote' decision.option_set.first.id user.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Start Voting">
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

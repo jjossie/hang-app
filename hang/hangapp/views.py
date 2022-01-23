@@ -7,6 +7,7 @@ from .models import Session, User, Decision, Option
 
 # Create your views here.
 
+
 def index(request):
     return HttpResponse("Hello yes this is the home page thanks")
 
@@ -29,7 +30,7 @@ def newUserJoinSession(request, sessionId):
         raise Http404(request, "No username for the new User was provided.")
     newUser = User.objects.create(username=username)
     newUser.save()
-    session = get_object_or_404(sessionId)  
+    session = get_object_or_404(sessionId)
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
 
 
@@ -43,7 +44,7 @@ def newUserNewSession(request):
     session = Session.objects.create(creator=newUser)
     session.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
-    
+
 # def joinSessionExistingUser(request, userId):
 #     user = get_object_or_404(User, pk=userId)
 #     try:
@@ -53,7 +54,7 @@ def newUserNewSession(request):
 #     except:
 #         raise Http404("Session not found")
 #     return render(request, 'hangapp/enterSession.html', {'session': session, 'user': user})
-    
+
 
 def addDecision(request, sessionId, userId):
     try:
@@ -68,7 +69,6 @@ def addDecision(request, sessionId, userId):
     newDecision = session.decision_set.create(decisionText=text)
     newDecision.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
-
 
 
 # def enterSession(request, sessionId, userId):
@@ -86,32 +86,39 @@ def addDecision(request, sessionId, userId):
 #     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
 
 
-
 def voteSession(request, sessionId, userId):
     session = get_object_or_404(Session, pk=sessionId)
     user = get_object_or_404(User, pk=userId)
-    decision = session.decision_set.all()[0]
-    return render(request, 'hangapp/vote.html', {'decision': decision, 'user': user})
+    decision = session.decision_set.all()[0]  # change to _set.first()
+    return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})
 
-def vote(request, decisionId, userId):
-    ''' This will be shown to each user to go through all the options to a decision.
-    It is also currently allowing suggestions on the same page so idk bruh
+
+def vote(request, optionId, userId):
+    ''' Show a user one option at a time and allow them to vote on them
     '''
+    option = get_object_or_404(Option, pk=optionId)
+    user = get_object_or_404(User, pk=userId)
+
+    # ******* DO SOMETHING HERE *******
+
+
+    
+
+
+    return render(request, 'hangapp/vote.html', {'option': option, 'user': user})
+
+
+def suggest(request, decisionId, userId):
     decision = get_object_or_404(Decision, pk=decisionId)
     user = get_object_or_404(User, pk=userId)
     try:
         # Check if they are making a new option
         newOptionText = request.POST['optionText']
         print(newOptionText)
-        newOption = decision.option_set.create(optionText=newOptionText, author=user)
-        # newOption = Option.objects.create(optionText=newOptionText, decision=decision)
+        newOption = decision.option_set.create(
+            optionText=newOptionText, author=user)
         newOption.save()
         print(f"Created new option {newOption}")
-    except KeyError:
-        # No worries if they didn't POST, that just means they're not making a new option
-        print("didn't create a new option")
     except:
-        # Something else went wrong, probably database-related
         raise Http404(f"Failed to add option '{newOptionText}'")
-    return render(request, 'hangapp/vote.html', {'decision': decision, 'user': user})
-
+    return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})

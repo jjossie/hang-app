@@ -15,7 +15,7 @@
         <h1>Session started by {{session.creator.username}}</h1>
         <h2>Voting as {{user.username}} </h2>
 
-        {% for decision in session.decision_set.all %} 
+        {% for decision in session.decision_set.all %}
         <div class="decision">
             <h3>{{decision.decisionText}}</h3>
         </div>
@@ -27,7 +27,7 @@
             <input type="submit" value="New Decision">
         </form>
 
-        
+
         <form action="{% url 'voteSession' session.id user.id %}" method="POST">
             {% csrf_token %}
             <input type="submit" value="Start Voting">

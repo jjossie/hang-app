@@ -7,14 +7,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
-    <title>Vote on {{decision.decisionText}} | Hangapp</title>
+    <title>Vote on {{option.optionText}} | Hangapp</title>
 </head>
 
 <body>
 
     <script>
-        function vote(voteCode, optionId){
-            switch(voteCode){
+        {
+            % comment %
+        }
+
+        function vote(voteCode, optionId) {
+            switch (voteCode) {
                 case "0":
                     write("voted no", `${optionId}out`);
                 case "1":
@@ -25,32 +29,28 @@
                     write("what", `${optionId}out`);
             }
         }
-        function write(text, id){
+
+        function write(text, id) {
             document.getElementById(id).innerHTML = text;
+        } {
+            % endcomment %
         }
     </script>
-    <div class="decision mainDiv">
-        <h1>Voting as {{user}}</h1>
-        <h2>{{ decision.decisionText }}</h2>
-        <ul>
-            {% for option in decision.option_set.all %}
-            <div class="option">
-                <span class="optionText">{{option.optionText}}</span><br>
-                <button class="voteButton" onclick="vote(0, {{option.id}})">No</button>
-                <button class="voteButton" onclick="vote(1, {{option.id}})">idc</button>
-                <button class="voteButton" onclick="vote(2, {{option.id}})">Yes</button>
-                <div id="{{option.id}}out"></div>
-            </div>
-            {% endfor %}
-        </ul>
 
-        <h3>Suggest: </h3>
-        <form action="{% url 'vote' decision.id user.id %}" method="POST">
-            {% csrf_token %}
-            <input type="text" name="optionText" id="addOptionTextBox">
-            <input type="submit" value="Add Suggestion">
-        </form>
+    <div class="mainDiv">
+        <h1>Vote on {{option.decision.decisionText}}</h1>
+        <em>Voting as {{user.username}}</em>
+        <div>
+            <h3 class="option">{{option.optionText}}</h3>
+            <form action="{% url 'vote' option.id user.id %}" method="POST">
+                {% csrf_token %}
+                <button name="no" value="0" id="">❎</button>
+                <button name="neutral" value="1" id="">🤷‍♂️</button>
+                <button name="yes" value="2" id="">✅</button>
+            </form>
+        </div>
     </div>
+
 
 </body>
 
