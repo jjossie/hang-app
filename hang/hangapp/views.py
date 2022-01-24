@@ -9,7 +9,7 @@ from .models import Session, User, Decision, Option
 
 
 def index(request):
-    return HttpResponse("Hello yes this is the home page thanks")
+    return HttpResponseRedirect(reverse('startUser'))
 
 
 def userEntry(request):
