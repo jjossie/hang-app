@@ -1,16 +1,18 @@
 from django.db import models
 from django.urls import reverse
+
 # Create your models here.
 
 
 class Option(models.Model):
+    '''Represents an option to vote on for a particular decision.'''
 
     _authorBiasFactor = 0.8
 
     optionText = models.CharField(max_length=400)
     score = models.FloatField(default=0.0)
-    author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="author")
-    # usersVoted = models.ForeignKey("User", on_delete=models.CASCADE, null=True) # TODO figure this out
+    author = models.ForeignKey(
+        "User", on_delete=models.CASCADE, related_name="author")
     decision = models.ForeignKey("Decision", on_delete=models.CASCADE)
     usersVoted = models.ManyToManyField("User")
 
@@ -22,11 +24,11 @@ class Option(models.Model):
         no if it is False, or neutral if undefined.'''
         if self.usersVoted.all().contains(user):
             raise Exception('User has already voted')
-            
+
         if inFavor is None:
             voteWeight = 0
         else:
-            voteWeight = 1 if inFavor else -1 
+            voteWeight = 1 if inFavor else -1
         if (user == self.author):
             voteWeight *= Option._authorBiasFactor
         self.usersVoted.add(user)
@@ -40,19 +42,17 @@ class Option(models.Model):
         usersInSession = self.decision.session.users.all()
         print(f"Session: {usersInSession}")
         print(f"This Option: {self.usersVoted.all()}")
-        return set(usersInSession) == set(self.usersVoted.all()) 
+        return set(usersInSession) == set(self.usersVoted.all())
 
 
 class Decision(models.Model):
+    '''Represents a decision that a group of friends is making.'''
 
     decisionText = models.CharField(max_length=400)
     session = models.ForeignKey("Session", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Decision: {self.decisionText}"
-
-
-    ''' TODO Fix all of these functions'''
 
     def addOption(self, option):
         self.options.append(option)
@@ -75,6 +75,8 @@ class Decision(models.Model):
 
 
 class User(models.Model):
+    '''Represents a single user of the web app. Currently only used 
+    to identify who made a particular decision or option.'''
 
     username = models.CharField(max_length=100)
 
@@ -84,10 +86,10 @@ class User(models.Model):
 
 
 class Session(models.Model):
+    '''Represents a session of decision-making by a group of friends.'''
 
-    # users = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    # decisions = models.ForeignKey(Decision, on_delete=models.CASCADE)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
+    creator = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="creator")
     users = models.ManyToManyField(User)
 
     def __str__(self):
@@ -100,65 +102,3 @@ class Session(models.Model):
 
     def getInviteLink(self):
         return reverse('startUserWithSession', args=(self.id,))
-
-
-
-# def main_test():
-
-#     u1 = User("Tony")
-#     u2 = User("Steve")
-#     u3 = User("Peter")
-#     u4 = User("Bruce")
-
-#     session = Session(u1)
-#     session.joinUser(u1)
-#     session.joinUser(u2)
-
-#     o1 = Option("Taco Bell", u1)
-#     o2 = Option("McDonald's", u2)
-#     o3 = Option("The Hickory", u1)
-#     o4 = Option("Wendy's", u1)
-
-#     question = Decision("Where should we eat?")
-#     session.addDecision(question)
-
-#     question.addOption(o1)
-#     question.addOption(o2)
-#     question.addOption(o3)
-#     question.addOption(o4)
-
-#     print("Pre-voting: ")
-
-#     for option in question.getOptions():
-#         print(option)
-
-#     o1.voteYes(u1)
-#     o1.voteYes(u2)
-#     o1.voteNo(u3)
-#     o1.voteNeutral(u4)
-
-#     o2.voteNeutral(u1)
-#     o2.voteNo(u2)
-#     o2.voteNo(u3)
-#     o2.voteNo(u4)
-
-#     o3.voteNo(u1)
-#     o3.voteYes(u2)
-#     o3.voteNeutral(u3)
-#     o3.voteYes(u4)
-
-#     o4.voteYes(u1)
-#     o4.voteNo(u2)
-#     o4.voteNo(u3)
-#     o4.voteNo(u4)
-
-#     # print("\n\nPost-voting: ")
-#     # for option in question.getOptions():
-#     #     print(option)
-#     # print("\n\nWinner:")
-#     # print(question.getWinner())
-
-#     print(o1.votingFinished())
-
-# if __name__ == '__main__':
-#     main_test()

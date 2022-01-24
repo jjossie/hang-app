@@ -14,11 +14,11 @@ One user will begin by creating a session, then entering a decision they want th
 
 ## Web Pages
 
-1. *hangapp/start* This is where users first enter their name to identify themselves to the group.
-2. *hangapp/join*  Here users can add decisions to be made as a group. After at least one decision has been added, an invite link is generated so multiple users can join the session.
-3. *hangapp/suggest* Here users suggest options for a particular decision.
-4. *hangapp/vote* After all suggestions are in, each user is presented with each option one at a time, where they will select whether they are in favor, against, or for that option.
-5. *hangapp/results* This is where the final results of the decision are displayed.
+1. **hangapp/start** This is where users first enter their name to identify themselves to the group.
+2. **hangapp/join**  Here users can add decisions to be made as a group. After at least one decision has been added, an invite link is generated so multiple users can join the session.
+3. **hangapp/suggest** Here users suggest options for a particular decision.
+4. **hangapp/vote** After all suggestions are in, each user is presented with each option one at a time, where they will select whether they are in favor, against, or for that option.
+5. **hangapp/results** This is where the final results of the decision are displayed.
 
 ## Development Environment
 
@@ -38,10 +38,11 @@ One user will begin by creating a session, then entering a decision they want th
 
 ### Short-term Improvements
 
-* Improve handling of POST data and database interactions
+* Improve handling of POST data and database interactions by decoupling Views that process/insert database data and those that just return a rendered page
 * Revamp user interface, especially for mobile
-* Utilize Django's session features
-* Enable real-time updates of database between users
+* Streamline the process of either doing multiple decisions per session or allowing the user to create a new session after finishing one for subsequent decisions
+* Utilize Django's session features to pass data more safely and securely
+* Enable real-time updates of database between users' views
 
 ### Long-term Improvements
 

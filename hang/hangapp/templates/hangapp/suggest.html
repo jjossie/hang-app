@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'hangapp/style.css' %}">
-    <title>Suggesting for {{decision.decisionText}}</title>
+    <title>Suggesting for {{decision.decisionText}} | HangApp</title>
 </head>
 
 <body>
@@ -20,10 +20,6 @@
                 <ul>
                     {% for option in decision.option_set.all %}
                     <li class="optionText">{{option.optionText}}</li><br>
-                    {% comment %} <button class="voteButton" onclick="vote(0, {{option.id}})">No</button>
-                    <button class="voteButton" onclick="vote(1, {{option.id}})">idc</button>
-                    <button class="voteButton" onclick="vote(2, {{option.id}})">Yes</button>
-                    <div id="{{option.id}}out"></div> {% endcomment %}
                     {% endfor %}
                 </ul>
             </div>
