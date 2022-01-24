@@ -10,7 +10,7 @@ HangApp is a web application meant to help groups of people make decisions as a 
 
 One user will begin by creating a session, then entering a decision they want the group to help make. Users then begin suggesting options which the group votes on by selecting yes, no, or neutral for each option. The results are then tallied and the winning option is presented to the group in true utilitarian fashion.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[HangApp Demo Video](https://youtu.be/Ry4YyhMZauo)
 
 ## Web Pages
 
