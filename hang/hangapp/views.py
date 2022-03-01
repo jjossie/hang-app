@@ -5,9 +5,24 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from .models import Session, User, Decision, Option
 
+from rest_framework import viewsets
+from .serializers import OptionSerializer, DecisionSerializer
 
+
+# REST API Views
+
+class OptionViewSet(viewsets.ModelViewSet):
+    queryset = Option.objects.all()
+    serializer_class = OptionSerializer
+
+
+class DecisionViewSet(viewsets.ModelViewSet):
+    queryset = Decision.objects.all()
+    serializer_class = DecisionSerializer
+
+
+# Vanilla Django Views
 # Create your views here.
-
 
 def index(request):
     return HttpResponseRedirect(reverse('startUser'))
