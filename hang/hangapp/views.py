@@ -5,6 +5,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from .models import Session, User, Decision, Option
 
+
 # Create your views here.
 
 
@@ -13,21 +14,21 @@ def index(request):
 
 
 def userEntry(request):
-    ''' This is the entry point for users who will be starting a new
-    session.'''
+    """ This is the entry point for users who will be starting a new
+    session."""
     return render(request, 'hangapp/start.html')
 
 
 def userEntryWithSession(request, sessionId):
-    '''This is the entry point for users who were given a unique session 
-    join link.'''
+    """This is the entry point for users who were given a unique session
+    join link."""
     session = get_object_or_404(Session, pk=sessionId)
     return render(request, 'hangapp/start.html', {'session': session})
 
 
 def newUserNewSession(request):
-    '''New users are directed here after entering their name to be 
-    created and saved in the database along with a new session.'''
+    """New users are directed here after entering their name to be
+    created and saved in the database along with a new session."""
     try:
         username = request.POST['username']
     except:
@@ -41,9 +42,9 @@ def newUserNewSession(request):
 
 
 def newUserJoinSession(request, sessionId):
-    '''Users who are joining an existing session will be directed here
-    after entering their name. This is where their name actually gets 
-    created.'''
+    """Users who are joining an existing session will be directed here
+    after entering their name. This is where their name actually gets
+    created."""
     try:
         username = request.POST['username']
     except:
@@ -56,7 +57,7 @@ def newUserJoinSession(request, sessionId):
 
 
 def addDecision(request, sessionId, userId):
-    '''The join page directs here to create a new Decision to be voted on.'''
+    """The join page directs here to create a new Decision to be voted on."""
     try:
         text = request.POST['decisionText']
     except:
@@ -71,9 +72,9 @@ def addDecision(request, sessionId, userId):
 
 
 def voteSession(request, sessionId, userId):
-    '''Once the decisions are set, this view directs the users to start 
+    """Once the decisions are set, this view directs the users to start
     suggesting options for a particular decision. For now all it will only
-    allow the first decision to be voted on - all others will be ignored.'''
+    allow the first decision to be voted on - all others will be ignored."""
     session = get_object_or_404(Session, pk=sessionId)
     user = get_object_or_404(User, pk=userId)
     decision = session.decision_set.all()[0]  # change to _set.first()
@@ -81,8 +82,8 @@ def voteSession(request, sessionId, userId):
 
 
 def vote(request, optionId, userId):
-    '''Show a user one option at a time and allow them to vote on them.
-    '''
+    """Show a user one option at a time and allow them to vote on them.
+    """
     option = get_object_or_404(Option, pk=optionId)
     user = get_object_or_404(User, pk=userId)
 
@@ -120,7 +121,7 @@ def vote(request, optionId, userId):
 
 
 def suggest(request, decisionId, userId):
-    '''Allow users to create new options for a particular decision.'''
+    """Allow users to create new options for a particular decision."""
     decision = get_object_or_404(Decision, pk=decisionId)
     user = get_object_or_404(User, pk=userId)
     try:
@@ -139,6 +140,6 @@ def suggest(request, decisionId, userId):
 
 
 def results(request, decisionId):
-    '''Display the results page for a particular decision.'''
+    """Display the results page for a particular decision."""
     decision = get_object_or_404(Decision, pk=decisionId)
     return render(request, 'hangapp/results.html', {'decision': decision})

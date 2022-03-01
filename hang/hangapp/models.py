@@ -5,7 +5,7 @@ from django.urls import reverse
 
 
 class Option(models.Model):
-    '''Represents an option to vote on for a particular decision.'''
+    """Represents an option to vote on for a particular decision."""
 
     _authorBiasFactor = 0.8
 
@@ -20,8 +20,8 @@ class Option(models.Model):
         return f"Option: {self.optionText} with score {self.score}"
 
     def vote(self, user, inFavor=None):
-        '''The given user votes on this choice. Yes if inFavor is True, 
-        no if it is False, or neutral if undefined.'''
+        """The given user votes on this choice. Yes if inFavor is True,
+        no if it is False, or neutral if undefined."""
         if self.usersVoted.all().contains(user):
             raise Exception('User has already voted')
 
@@ -29,7 +29,7 @@ class Option(models.Model):
             voteWeight = 0
         else:
             voteWeight = 1 if inFavor else -1
-        if (user == self.author):
+        if user == self.author:
             voteWeight *= Option._authorBiasFactor
         self.usersVoted.add(user)
         self.score += voteWeight
@@ -46,7 +46,7 @@ class Option(models.Model):
 
 
 class Decision(models.Model):
-    '''Represents a decision that a group of friends is making.'''
+    """Represents a decision that a group of friends is making."""
 
     decisionText = models.CharField(max_length=400)
     session = models.ForeignKey("Session", on_delete=models.CASCADE)
@@ -75,8 +75,8 @@ class Decision(models.Model):
 
 
 class User(models.Model):
-    '''Represents a single user of the web app. Currently only used 
-    to identify who made a particular decision or option.'''
+    """Represents a single user of the web app. Currently, only used
+    to identify who made a particular decision or option."""
 
     username = models.CharField(max_length=100)
 
@@ -86,7 +86,7 @@ class User(models.Model):
 
 
 class Session(models.Model):
-    '''Represents a session of decision-making by a group of friends.'''
+    """Represents a session of decision-making by a group of friends."""
 
     creator = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="creator")

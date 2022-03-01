@@ -16,7 +16,34 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+# REST API Imports
+from django.contrib.auth.models import User
+from rest_framework import routers, serializers, viewsets
+
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        # I think these are the fields that get exposed to the API in JSON.
+        fields = ['url', 'username', 'email', 'is_staff']
+
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+# Routers provide an easy way to determine the URL Conf automatically
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+
 urlpatterns = [
     path('hangapp/', include('hangapp.urls')),
     path('admin/', admin.site.urls),
+
+    # REST API stuff
+    path('api-auth/', include('rest_framework.urls')),
+    path('', include(router.urls))
 ]
