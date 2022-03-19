@@ -18,7 +18,7 @@ body {
     height: 100%;
 }
 
-.contentContainer {
+#contentContainer {
     height: 100%;
     display: flex;
     justify-content: center;
