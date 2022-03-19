@@ -1,12 +1,13 @@
-from contextlib import nullcontext
-from http.client import HTTPResponse
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
+
 from .models import Session, User, Decision, Option
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 # REST API Views
@@ -19,6 +20,45 @@ class OptionViewSet(viewsets.ModelViewSet):
 class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+# @permission_classes((permissions.AllowAny,))
+def decision_detail(request, pk) -> Response:
+    """
+    Retrieve, update, or delete a Decision object.
+    """
+    try:
+        decision = Decision.objects.get(pk=pk)
+    except Decision.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "PUT":
+        # Update an existing decision
+        serializer = DecisionSerializer(decision, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+    elif request.method == "GET":
+        # Get a decision
+        serializer = DecisionSerializer(decision)
+        return Response(serializer.data, status.HTTP_200_OK)
+    elif request.method == "DELETE":
+        # Delete a decision
+        decision.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def create_decision(request) -> Response:
+    # TODO fix this, or don't, idk lol
+    serializer = DecisionSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # Vanilla Django Views

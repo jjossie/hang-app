@@ -1,0 +1,46 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@100;300;400;500;700;800;900&display=swap");
+
+:root {
+    /* Color Palette */
+    --medium-red: #e63946ff;
+    --neutral: #f1faeeff;
+    --light-blue: #a8dadcff;
+    --medium-blue: #457b9dff;
+    --dark-blue: #1d3557ff;
+}
+
+html,
+body {
+    background-color: var(--light-blue);
+    font-family: "M PLUS 1p", sans-serif;
+    color: var(--dark-blue);
+    height: 100%;
+}
+
+.contentContainer {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.optionDetailCard {
+    background-color: var(--neutral);
+    border-radius: 20px;
+    width: 75%;
+    height: 80%;
+    margin: auto;
+    box-shadow: 0px 2px 5px 0px var(--dark-blue);
+    padding: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.optionText {
+    font-weight: 400;
+    font-size: 20pt;
+    text-align: center;
+}
