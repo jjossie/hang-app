@@ -68,133 +68,133 @@ def index(request):
     return HttpResponseRedirect(reverse('startUser'))
 
 
-def userEntry(request):
+def user_entry(request):
     """ This is the entry point for users who will be starting a new
     session."""
     return render(request, 'hangapp/start.html')
 
 
-def userEntryWithSession(request, sessionId):
+def user_entry_with_session(request, session_id):
     """This is the entry point for users who were given a unique session
     join link."""
-    session = get_object_or_404(Session, pk=sessionId)
+    session = get_object_or_404(Session, pk=session_id)
     return render(request, 'hangapp/start.html', {'session': session})
 
 
-def newUserNewSession(request):
+def new_user_new_session(request):
     """New users are directed here after entering their name to be
     created and saved in the database along with a new session."""
     try:
         username = request.POST['username']
-    except:
+    except Exception:
         raise Http404(request, "No username for the new User was provided.")
-    newUser = User.objects.create(username=username)
-    newUser.save()
-    session = Session.objects.create(creator=newUser)
-    session.joinUser(newUser)
+    new_user = User.objects.create(username=username)
+    new_user.save()
+    session = Session.objects.create(creator=new_user)
+    session.join_user(new_user)
     session.save()
-    return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
+    return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
 
 
-def newUserJoinSession(request, sessionId):
+def new_user_join_session(request, session_id):
     """Users who are joining an existing session will be directed here
     after entering their name. This is where their name actually gets
     created."""
     try:
         username = request.POST['username']
-    except:
+    except Exception:
         raise Http404(request, "No username for the new User was provided.")
-    newUser = User.objects.create(username=username)
-    newUser.save()
-    session = get_object_or_404(Session, pk=sessionId)
-    session.joinUser(newUser)
-    return render(request, 'hangapp/join.html', {'session': session, 'user': newUser})
+    new_user = User.objects.create(username=username)
+    new_user.save()
+    session = get_object_or_404(Session, pk=session_id)
+    session.join_user(new_user)
+    return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
 
 
-def addDecision(request, sessionId, userId):
+def add_decision(request, session_id, user_id):
     """The join page directs here to create a new Decision to be voted on."""
     try:
         text = request.POST['decisionText']
-    except:
+    except Exception:
         raise Http404("Malformed request, missing POST info")
 
-    session = get_object_or_404(Session, pk=sessionId)
-    user = get_object_or_404(User, pk=userId)
+    session = get_object_or_404(Session, pk=session_id)
+    user = get_object_or_404(User, pk=user_id)
 
-    newDecision = session.decision_set.create(decisionText=text)
-    newDecision.save()
+    new_decision = session.decision_set.create(decisionText=text)
+    new_decision.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': user})
 
 
-def voteSession(request, sessionId, userId):
+def vote_session(request, session_id, user_id):
     """Once the decisions are set, this view directs the users to start
     suggesting options for a particular decision. For now all it will only
     allow the first decision to be voted on - all others will be ignored."""
-    session = get_object_or_404(Session, pk=sessionId)
-    user = get_object_or_404(User, pk=userId)
+    session = get_object_or_404(Session, pk=session_id)
+    user = get_object_or_404(User, pk=user_id)
     decision = session.decision_set.all()[0]  # change to _set.first()
     return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})
 
 
-def vote(request, optionId, userId):
+def vote(request, option_id, user_id):
     """Show a user one option at a time and allow them to vote on them.
     """
-    option = get_object_or_404(Option, pk=optionId)
-    user = get_object_or_404(User, pk=userId)
+    option = get_object_or_404(Option, pk=option_id)
+    user = get_object_or_404(User, pk=user_id)
 
     # Get the vote if one was given
     try:
-        voteOnOption = request.POST['vote']
+        vote_on_option = request.POST['vote']
 
-    except:
+    except Exception:
         if __debug__:
             print("no vote led into this view")
         return render(request, 'hangapp/vote.html', {'option': option, 'user': user})
     try:
         # Vote on the option object
-        if voteOnOption == 'no':
-            option.vote(user, inFavor=False)
-        elif voteOnOption == 'yes':
-            option.vote(user, inFavor=True)
+        if vote_on_option == 'no':
+            option.vote(user, in_favor=False)
+        elif vote_on_option == 'yes':
+            option.vote(user, in_favor=True)
         else:
             option.vote(user)
-    except:
+    except Exception:
         print("Error: This user has already voted.")
 
-    allOptions = option.decision.option_set.all()
+    all_options = option.decision.option_set.all()
     # This might be the most inefficient operation I've ever written
-    remainingOptions = list(filter(lambda option:
-                                   not option.usersVoted.contains(user), allOptions))
+    remaining_options = list(filter(lambda op:
+                                    not op.usersVoted.contains(user), all_options))
     if __debug__:
-        print(remainingOptions)
+        print(remaining_options)
 
-    if len(remainingOptions) == 0:
+    if len(remaining_options) == 0:
         # Go to results page
         return render(request, 'hangapp/results.html', {'decision': option.decision})
     else:
-        return render(request, 'hangapp/vote.html', {'option': remainingOptions[0], 'user': user})
+        return render(request, 'hangapp/vote.html', {'option': remaining_options[0], 'user': user})
 
 
-def suggest(request, decisionId, userId):
+def suggest(request, decision_id, user_id):
     """Allow users to create new options for a particular decision."""
-    decision = get_object_or_404(Decision, pk=decisionId)
-    user = get_object_or_404(User, pk=userId)
+    decision = get_object_or_404(Decision, pk=decision_id)
+    user = get_object_or_404(User, pk=user_id)
     try:
         # Check if they are making a new option
-        newOptionText = request.POST['optionText']
+        new_option_text = request.POST['optionText']
         if __debug__:
-            print(newOptionText)
-        newOption = decision.option_set.create(
-            optionText=newOptionText, author=user)
-        newOption.save()
+            print(new_option_text)
+        new_option = decision.option_set.create(
+            optionText=new_option_text, author=user)
+        new_option.save()
         if __debug__:
-            print(f"Created new option {newOption}")
-    except:
-        raise Http404(f"Failed to add option '{newOptionText}'")
+            print(f"Created new option {new_option}")
+    except Exception:
+        raise Http404(f"Failed to add option '{new_option_text}'")
     return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})
 
 
-def results(request, decisionId):
+def results(request, decision_id):
     """Display the results page for a particular decision."""
-    decision = get_object_or_404(Decision, pk=decisionId)
+    decision = get_object_or_404(Decision, pk=decision_id)
     return render(request, 'hangapp/results.html', {'decision': decision})

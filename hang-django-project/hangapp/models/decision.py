@@ -28,8 +28,8 @@ class Decision(models.Model):
     def getWinner(self):
         winner = self.options[0]
         for option in self.options:
-            score = option.getScore()
-            if score > winner.getScore():
+            score = option.get_score()
+            if score > winner.get_score():
                 winner = option
 
         return winner

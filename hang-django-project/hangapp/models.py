@@ -19,30 +19,30 @@ class Option(models.Model):
     def __str__(self):
         return f"Option: {self.optionText} with score {self.score}"
 
-    def vote(self, user, inFavor=None):
+    def vote(self, user, in_favor=None):
         """The given user votes on this choice. Yes if inFavor is True,
         no if it is False, or neutral if undefined."""
         if self.usersVoted.all().contains(user):
             raise Exception('User has already voted')
 
-        if inFavor is None:
-            voteWeight = 0
+        if in_favor is None:
+            vote_weight = 0
         else:
-            voteWeight = 1 if inFavor else -1
+            vote_weight = 1 if in_favor else -1
         if user == self.author:
-            voteWeight *= Option._authorBiasFactor
+            vote_weight *= Option._authorBiasFactor
         self.usersVoted.add(user)
-        self.score += voteWeight
+        self.score += vote_weight
         self.save()
 
-    def getScore(self):
+    def get_score(self):
         return self.score
 
-    def votingFinished(self):
-        usersInSession = self.decision.session.users.all()
-        print(f"Session: {usersInSession}")
+    def voting_finished(self):
+        users_in_session = self.decision.session.users.all()
+        print(f"Session: {users_in_session}")
         print(f"This Option: {self.usersVoted.all()}")
-        return set(usersInSession) == set(self.usersVoted.all())
+        return set(users_in_session) == set(self.usersVoted.all())
 
 
 class Decision(models.Model):
@@ -54,22 +54,22 @@ class Decision(models.Model):
     def __str__(self):
         return f"Decision: {self.decisionText}"
 
-    def addOption(self, option):
+    def add_option(self, option):
         self.options.append(option)
         option.setParentDecision(self)
 
-    def getWinner(self):
+    def get_winner(self):
         options = self.option_set.all()
         winner = options[0]
         for option in options:
-            score = option.getScore()
-            if score > winner.getScore():
+            score = option.get_score()
+            if score > winner.get_score():
                 winner = option
         return winner
 
-    def votingFinished(self) -> bool:
+    def voting_finished(self) -> bool:
         for option in self.option_set.all():
-            if not option.votingFinished():
+            if not option.voting_finished():
                 return False
         return True
 
@@ -95,10 +95,10 @@ class Session(models.Model):
     def __str__(self):
         return f"Session created by {self.creator}"
 
-    def joinUser(self, user):
+    def join_user(self, user):
         self.users.add(user)
         print(f"Just added user {user.username} to session {self.id}")
         print(self.users.all())
 
-    def getInviteLink(self):
+    def get_invite_link(self):
         return reverse('startUserWithSession', args=(self.id,))
