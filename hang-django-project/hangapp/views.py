@@ -5,8 +5,8 @@ from django.urls import reverse
 from .models import Session, User, Decision, Option
 
 from rest_framework import viewsets, status
-from .serializers import OptionSerializer, DecisionSerializer
-from rest_framework.decorators import api_view
+from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 
 
@@ -15,6 +15,14 @@ from rest_framework.response import Response
 class OptionViewSet(viewsets.ModelViewSet):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
+
+    @action(detail=True, methods=['post'])
+    def vote_on_option(self, request, pk=None):
+        option = self.get_object()
+        serializer = VoteDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            print("Vote Detail serialized successfully")
+
 
 
 class DecisionViewSet(viewsets.ModelViewSet):

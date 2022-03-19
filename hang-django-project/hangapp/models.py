@@ -1,7 +1,21 @@
+from enum import Enum
+
 from django.db import models
 from django.urls import reverse
 
+
 # Create your models here.
+
+class Vote(Enum):
+    NO = 0
+    NEUTRAL = 1
+    YES = 2
+
+
+class VoteDetail:
+    def __init__(self, vote: int, time_passed: float):
+        self.vote = Vote(vote)  # Ensure the int is either 0, 1, or 2
+        self.time_passed = time_passed
 
 
 class Option(models.Model):
@@ -82,6 +96,7 @@ class User(models.Model):
 
     def __str__(self):
         return self.username
+
     pass
 
 

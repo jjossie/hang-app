@@ -3,8 +3,12 @@ from rest_framework import serializers
 from .models import Option, Decision, User, Session
 
 
-class OptionSerializer(serializers.HyperlinkedModelSerializer):
+class VoteDetailSerializer(serializers.Serializer):
+    vote = serializers.IntegerField()
+    time_passed = serializers.FloatField()
 
+
+class OptionSerializer(serializers.HyperlinkedModelSerializer):
     decision = serializers.HyperlinkedRelatedField(read_only=True, view_name='decision-detail')
 
     class Meta:
@@ -28,4 +32,3 @@ class SessionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Session
         fields = ['']
-
