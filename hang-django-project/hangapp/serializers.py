@@ -1,11 +1,13 @@
 from rest_framework import serializers
-
-from .models import Option, Decision, User, Session
+from .models import Option, Decision, User, Session, VoteDetail
 
 
 class VoteDetailSerializer(serializers.Serializer):
     vote = serializers.IntegerField()
     time_passed = serializers.FloatField()
+
+    def create(self, validated_data):
+        return VoteDetail(**validated_data)
 
 
 class OptionSerializer(serializers.HyperlinkedModelSerializer):

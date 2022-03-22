@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
+# from django.contrib.auth.models import User
 
 from .models import Session, User, Decision, Option
 
@@ -8,26 +9,53 @@ from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 
 # REST API Views
+# *** Class-based
 
 class OptionViewSet(viewsets.ModelViewSet):
     queryset = Option.objects.all()
     serializer_class = OptionSerializer
 
-    @action(detail=True, methods=['post'])
-    def vote_on_option(self, request, pk=None):
-        option = self.get_object()
-        serializer = VoteDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            print("Vote Detail serialized successfully")
-
+    # This is not working currently, giving 405 errors and idk why
+    # @action(detail=True, methods=['post'], permission_classes=[AllowAny])
+    # def vote_on_option(self, request, pk=None):
+    #     option = self.get_object()
+    #     serializer = VoteDetailSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         print("Vote Detail serialized successfully")
+    #         option.vote("dummy_user", serializer.validated_data['vote'])
+    #     else:
+    #         return Response(serializer.errors,
+    #                         status=status.HTTP_400_BAD_REQUEST)
 
 
 class DecisionViewSet(viewsets.ModelViewSet):
     queryset = Decision.objects.all()
     serializer_class = DecisionSerializer
+
+
+# *** Function-based
+
+@api_view(['POST'])
+def vote_on_option(request, pk) -> Response:
+    option = get_object_or_404(Option, pk=pk)
+    serializer = VoteDetailSerializer(data=request.data)
+    if serializer.is_valid():
+        print("Vote Detail serialized successfully")
+        try:
+            # This isn't done until the users stuff is figured out
+            option.vote(User.objects.get(pk=3), serializer.save())
+        except Exception as e:
+            # TODO implement error messages to the user?
+            print(e)
+        return Response({"vote_tally": option.get_score()},
+                        status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors,
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

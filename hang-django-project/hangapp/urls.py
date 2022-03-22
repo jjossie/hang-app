@@ -16,6 +16,7 @@ urlpatterns = [
     # REST API URLs made by me (Function-based)
     path('api/decision/<int:pk>', views.decision_detail),
     path('api/decision-add', views.create_decision),
+    path('api/option-vote/<int:pk>', views.vote_on_option),
 
     path('start', views.user_entry, name='startUser'),
     path('start/<int:session_id>', views.user_entry_with_session,

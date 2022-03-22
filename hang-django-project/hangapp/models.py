@@ -33,16 +33,21 @@ class Option(models.Model):
     def __str__(self):
         return f"Option: {self.optionText} with score {self.score}"
 
-    def vote(self, user, in_favor=None):
+    def vote(self, user, vote_detail: VoteDetail):
         """The given user votes on this choice. Yes if inFavor is True,
         no if it is False, or neutral if undefined."""
         if self.usersVoted.all().contains(user):
             raise Exception('User has already voted')
 
-        if in_favor is None:
-            vote_weight = 0
+        if vote_detail.vote == Vote.YES:
+            vote_weight = 1
+        elif vote_detail.vote == Vote.NO:
+            vote_weight = -1
         else:
-            vote_weight = 1 if in_favor else -1
+            assert(vote_detail.vote == Vote.NEUTRAL)
+            vote_weight = 0
+
+        # TODO do something with the time_passed param
         if user == self.author:
             vote_weight *= Option._authorBiasFactor
         self.usersVoted.add(user)
