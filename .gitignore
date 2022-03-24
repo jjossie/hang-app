@@ -25,6 +25,6 @@ hang-django-project/hangapp/__pycache__/__init__.cpython-39.pyc
 hang-django-project/hangapp/__pycache__/models.cpython-39.pyc
 hang-django-project/hangapp/__pycache__/urls.cpython-39.pyc
 hang-django-project/hangapp/__pycache__/views.cpython-39.pyc
-hang-django-project/hangapp/migrations/__pycache__/__init__.cpython-39.pyc
+hang-django-project/hangapp/migrations/__pycache__/
 
 hang-django-project/db.sqlite3
