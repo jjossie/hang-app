@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="PYTHON_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="django" name="Django">
-      <configuration>
-        <option name="rootFolder" value="$MODULE_DIR$/hang-django-project" />
-        <option name="settingsModule" value="hang/settings.py" />
-        <option name="manageScript" value="manage.py" />
-        <option name="environment" value="&lt;map/&gt;" />
-        <option name="doNotUseTestRunner" value="false" />
-        <option name="trackFilePattern" value="" />
-      </configuration>
-    </facet>
-  </component>
-  <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Python 3.10 (Runtime-Terror)" jdkType="Python SDK" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
+<module version="4">
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
     <option name="myDocStringFormat" value="Plain" />
@@ -25,7 +8,7 @@
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/hang/hangapp/templates" />
+        <option value="$MODULE_DIR$/hang-django-project/hangapp/templates" />
       </list>
     </option>
   </component>
