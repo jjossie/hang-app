@@ -68,7 +68,7 @@ class Decision(models.Model):
     """Represents a decision that a group of friends is making."""
 
     decisionText = models.CharField(max_length=400)
-    session = models.ForeignKey("Session", on_delete=models.CASCADE)
+    session = models.ForeignKey("hangapp.HangoutSession", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Decision: {self.decisionText}"
@@ -105,7 +105,7 @@ class Homie(models.Model):
     pass
 
 
-class Session(models.Model):
+class HangoutSession(models.Model):
     """Represents a session of decision-making by a group of friends."""
 
     creator = models.ForeignKey(

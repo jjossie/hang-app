@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
-from .models import Session, Homie, Decision, Option
+from .models import HangoutSession, Homie, Decision, Option
 
 from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
@@ -141,7 +141,7 @@ def user_entry(request):
 def user_entry_with_session(request, session_id):
     """This is the entry point for users who were given a unique session
     join link."""
-    session = get_object_or_404(Session, pk=session_id)
+    session = get_object_or_404(HangoutSession, pk=session_id)
     return render(request, 'hangapp/start.html', {'session': session})
 
 
@@ -154,7 +154,7 @@ def new_user_new_session(request):
         raise Http404(request, "No username for the new User was provided.")
     new_user = Homie.objects.create(username=username)
     new_user.save()
-    session = Session.objects.create(creator=new_user)
+    session = HangoutSession.objects.create(creator=new_user)
     session.join_user(new_user)
     session.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
@@ -170,7 +170,7 @@ def new_user_join_session(request, session_id):
         raise Http404(request, "No username for the new User was provided.")
     new_user = Homie.objects.create(username=username)
     new_user.save()
-    session = get_object_or_404(Session, pk=session_id)
+    session = get_object_or_404(HangoutSession, pk=session_id)
     session.join_user(new_user)
     return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
 
@@ -182,7 +182,7 @@ def add_decision(request, session_id, user_id):
     except Exception:
         raise Http404("Malformed request, missing POST info")
 
-    session = get_object_or_404(Session, pk=session_id)
+    session = get_object_or_404(HangoutSession, pk=session_id)
     user = get_object_or_404(Homie, pk=user_id)
 
     new_decision = session.decision_set.create(decisionText=text)
@@ -194,7 +194,7 @@ def vote_session(request, session_id, user_id):
     """Once the decisions are set, this view directs the users to start
     suggesting options for a particular decision. For now all it will only
     allow the first decision to be voted on - all others will be ignored."""
-    session = get_object_or_404(Session, pk=session_id)
+    session = get_object_or_404(HangoutSession, pk=session_id)
     user = get_object_or_404(Homie, pk=user_id)
     decision = session.decision_set.all()[0]  # change to _set.first()
     return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})

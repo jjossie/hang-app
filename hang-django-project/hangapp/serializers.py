@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Option, Decision, Homie, Session, VoteDetail
+from .models import Option, Decision, Homie, HangoutSession, VoteDetail
 
 
 class VoteDetailSerializer(serializers.Serializer):
@@ -32,5 +32,5 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class SessionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Session
+        model = HangoutSession
         fields = ['']
