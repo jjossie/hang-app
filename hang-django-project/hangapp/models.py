@@ -26,9 +26,9 @@ class Option(models.Model):
     optionText = models.CharField(max_length=400)
     score = models.FloatField(default=0.0)
     author = models.ForeignKey(
-        "User", on_delete=models.CASCADE, related_name="author")
+        "hangapp.Homie", on_delete=models.CASCADE, related_name="author")
     decision = models.ForeignKey("Decision", on_delete=models.CASCADE)
-    usersVoted = models.ManyToManyField("User")
+    usersVoted = models.ManyToManyField("hangapp.Homie")
 
     def __str__(self):
         return f"Option: {self.optionText} with score {self.score}"
@@ -93,7 +93,7 @@ class Decision(models.Model):
         return True
 
 
-class User(models.Model):
+class Homie(models.Model):
     """Represents a single user of the web app. Currently, only used
     to identify who made a particular decision or option."""
 
@@ -109,8 +109,8 @@ class Session(models.Model):
     """Represents a session of decision-making by a group of friends."""
 
     creator = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="creator")
-    users = models.ManyToManyField(User)
+        Homie, on_delete=models.CASCADE, related_name="creator")
+    users = models.ManyToManyField(Homie)
 
     def __str__(self):
         return f"Session created by {self.creator}"

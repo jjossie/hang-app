@@ -1,15 +1,18 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-# from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
-from .models import Session, User, Decision, Option
+from .models import Session, Homie, Decision, Option
 
 from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+
+from .custom_config import *
 
 
 # REST API Views
@@ -40,6 +43,31 @@ class DecisionViewSet(viewsets.ModelViewSet):
 # *** Function-based
 
 @api_view(['POST'])
+def auth_user_entry(request) -> Response:
+    """
+    Given a username in the request, creates a new user (or maybe retrieves the existing one)
+    and logs them into the session.
+    """
+    if request.user.is_authenticated:
+        return Response(data=f"Already Logged In as {request.user.username}", status=status.HTTP_204_NO_CONTENT)
+    try:
+        username = request.data['username']
+        # Check if the user exists
+        user = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
+        if user is not None:
+            # Login as the user, which already exists in the database
+            login(request, user)
+            return Response(data=f"Successfully logged in {username}", status=status.HTTP_200_OK)
+        else:
+            # User didn't exist already, so make a new one
+            user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
+            login(request, user)
+            return Response(data=f"Successfully created user {username}", status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response(e.__str__(), status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
 def vote_on_option(request, pk) -> Response:
     option = get_object_or_404(Option, pk=pk)
     serializer = VoteDetailSerializer(data=request.data)
@@ -47,7 +75,7 @@ def vote_on_option(request, pk) -> Response:
         print("Vote Detail serialized successfully")
         try:
             # This isn't done until the users stuff is figured out
-            option.vote(User.objects.get(pk=3), serializer.save())
+            option.vote(Homie.objects.get(pk=3), serializer.save())
         except Exception as e:
             # TODO implement error messages to the user?
             print(e)
@@ -124,7 +152,7 @@ def new_user_new_session(request):
         username = request.POST['username']
     except Exception:
         raise Http404(request, "No username for the new User was provided.")
-    new_user = User.objects.create(username=username)
+    new_user = Homie.objects.create(username=username)
     new_user.save()
     session = Session.objects.create(creator=new_user)
     session.join_user(new_user)
@@ -140,7 +168,7 @@ def new_user_join_session(request, session_id):
         username = request.POST['username']
     except Exception:
         raise Http404(request, "No username for the new User was provided.")
-    new_user = User.objects.create(username=username)
+    new_user = Homie.objects.create(username=username)
     new_user.save()
     session = get_object_or_404(Session, pk=session_id)
     session.join_user(new_user)
@@ -155,7 +183,7 @@ def add_decision(request, session_id, user_id):
         raise Http404("Malformed request, missing POST info")
 
     session = get_object_or_404(Session, pk=session_id)
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(Homie, pk=user_id)
 
     new_decision = session.decision_set.create(decisionText=text)
     new_decision.save()
@@ -167,7 +195,7 @@ def vote_session(request, session_id, user_id):
     suggesting options for a particular decision. For now all it will only
     allow the first decision to be voted on - all others will be ignored."""
     session = get_object_or_404(Session, pk=session_id)
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(Homie, pk=user_id)
     decision = session.decision_set.all()[0]  # change to _set.first()
     return render(request, 'hangapp/suggest.html', {'decision': decision, 'user': user})
 
@@ -176,7 +204,7 @@ def vote(request, option_id, user_id):
     """Show a user one option at a time and allow them to vote on them.
     """
     option = get_object_or_404(Option, pk=option_id)
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(Homie, pk=user_id)
 
     # Get the vote if one was given
     try:
@@ -214,7 +242,7 @@ def vote(request, option_id, user_id):
 def suggest(request, decision_id, user_id):
     """Allow users to create new options for a particular decision."""
     decision = get_object_or_404(Decision, pk=decision_id)
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(Homie, pk=user_id)
     try:
         # Check if they are making a new option
         new_option_text = request.POST['optionText']

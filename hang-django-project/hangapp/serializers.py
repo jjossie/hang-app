@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Option, Decision, User, Session, VoteDetail
+from .models import Option, Decision, Homie, Session, VoteDetail
 
 
 class VoteDetailSerializer(serializers.Serializer):
@@ -26,7 +26,7 @@ class DecisionSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = User
+        model = Homie
         fields = ['username']
 
 
