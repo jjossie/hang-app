@@ -1,4 +1,4 @@
-import {renderOptionCard} from "./components.js";
+import {displayPage, renderOptionCard, renderStartPage, Router} from "./components.js";
 
 const contentContainer = document.getElementById("contentContainer");
 
@@ -35,4 +35,7 @@ async function getAllOptions() {
     }
 }
 
-getAllOptions();
+// getAllOptions();
+const r = new Router();
+r.navigateToStart();
+// renderStartPage();

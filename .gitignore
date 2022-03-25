@@ -4,6 +4,8 @@
 
 hang-django-project/db.sqlite3
 
+# PyCharm workspace
+/.idea/workspace.xml
 
 
 
@@ -69,3 +71,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+
+
