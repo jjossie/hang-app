@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/decision-add', views.create_decision),
     path('api/option-vote/<int:pk>', views.vote_on_option),
     path('api/user-entry/', views.auth_user_entry),
+    path('api/user-exit/', views.logout_view),
 
     path('start', views.user_entry, name='startUser'),
     path('start/<int:session_id>', views.user_entry_with_session,

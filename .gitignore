@@ -1,5 +1,8 @@
 /.vscode
 
+node_modules/
+
+
 *.pyc
 
 hang-django-project/db.sqlite3

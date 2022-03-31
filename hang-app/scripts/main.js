@@ -1,20 +1,33 @@
 import {displayPage, renderOptionCard, renderStartPage, Router} from "./components.js";
-import {getAllOptions} from "./utilities.js";
+import {getAllOptions, login} from "./utilities.js";
 
 const contentContainer = document.getElementById("contentContainer");
 
 // contentContainer.appendChild(renderOptionCard(
 //     "This is some more sample option text"
 // ));
-getAllOptions()
+
+login("Bruh")
     .then((data) => {
-        for (const option of data) {
-            console.log(option);
-            contentContainer.appendChild(
-                renderOptionCard(option.optionText)
-            );
-        }
-    });
+        console.log(data);
+    })
+    .catch((p) => {
+        console.log(p);
+    })
+
+
+// getAllOptions()
+//     .then((data) => {
+//         for (const option of data) {
+//             console.log(option);
+//             contentContainer.appendChild(
+//                 renderOptionCard(option.optionText)
+//             );
+//         }
+//     });
+
+
+
 // const r = new Router();
 // r.navigateToStart();
 // renderStartPage();

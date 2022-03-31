@@ -1,7 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
 from .models import HangoutSession, Homie, Decision, Option
@@ -67,6 +68,13 @@ def auth_user_entry(request) -> Response:
         return Response(e.__str__(), status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def logout_view(request) -> Response:
+    logout(request)
+    return Response(status=status.HTTP_200_OK)
+
+
+# @login_required
 @api_view(['POST'])
 def vote_on_option(request, pk) -> Response:
     option = get_object_or_404(Option, pk=pk)
