@@ -83,7 +83,10 @@ def vote_on_option(request, pk) -> Response:
         print("Vote Detail serialized successfully")
         try:
             # This isn't done until the users stuff is figured out
-            option.vote(Homie.objects.get(pk=3), serializer.save())
+            # option.vote(Homie.objects.get(pk=3), serializer.save())
+            homie = Homie.objects.get(pk=request.user)
+            print(homie)
+            option.vote(homie, serializer.save())
         except Exception as e:
             # TODO implement error messages to the user?
             print(e)
