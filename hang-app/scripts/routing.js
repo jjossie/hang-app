@@ -27,7 +27,7 @@ class Destination {
 
 const destinations = {
     "start": new Destination(view.renderStartPage, () => {
-        document.getElementById("start__newHangoutButton").addEventListener('touchend', () => {
+        document.getElementById("start__newHangoutButton").addEventListener('touchend', (e) => {
             // displayPage(view.renderLoginPage());
             navigate("login");
         });
@@ -37,19 +37,23 @@ const destinations = {
         });
     }),
     "join": new Destination(view.renderJoinPage, () => {
-        document.getElementById("join__joinHangoutButton").addEventListener('touchend', () => {
+        document.getElementById("join__joinHangoutButton").addEventListener('touchend', (e) => {
             // API Request with the Join Code
             // displayPage(view.renderLoginPage());
             navigate("login");
         });
     }),
     "login": new Destination(view.renderLoginPage, () => {
-        document.getElementById("login__loginButton").addEventListener('touchend', () => {
+        document.getElementById("login__loginButton").addEventListener('touchend', (e) => {
             // API Login Request
             // navigate("pickDecision");
         });
     }),
     "pickDecision": new Destination(view.renderPickDecisionPage, () => {
+        document.getElementById("decision__startButton").addEventListener('touchend', (e) => {
+            // API call?
+            navigate("suggest");
+        });
 
     }),
     "suggest": new Destination(view.renderSuggestPage, () => {
