@@ -94,6 +94,13 @@ class Decision(models.Model):
         return True
 
 
+def get_or_create_homie(user: User):
+    if hasattr(user, 'homie'):
+        return user.homie
+    else:
+        return Homie.objects.create(pk=user, username=user.username)
+
+
 class Homie(models.Model):
     """Represents a single user of the web app. Currently, only used
     to identify who made a particular decision or option."""
@@ -103,8 +110,6 @@ class Homie(models.Model):
 
     def __str__(self):
         return self.username
-
-    pass
 
 
 class HangoutSession(models.Model):

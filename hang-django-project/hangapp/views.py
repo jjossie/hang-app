@@ -4,8 +4,9 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import HangoutSession, Homie, Decision, Option
+from .models import HangoutSession, Homie, Decision, Option, get_or_create_homie
 
 from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
@@ -42,7 +43,7 @@ class DecisionViewSet(viewsets.ModelViewSet):
 
 
 # *** Function-based
-
+@csrf_exempt
 @api_view(['POST'])
 def auth_user_entry(request) -> Response:
     """
@@ -84,7 +85,10 @@ def vote_on_option(request, pk) -> Response:
         try:
             # This isn't done until the users stuff is figured out
             # option.vote(Homie.objects.get(pk=3), serializer.save())
-            homie = Homie.objects.get(pk=request.user)
+            print(request.user)
+            print(request.user.username)
+            print(request.user.is_authenticated)
+            homie = get_or_create_homie(request.user)
             print(homie)
             option.vote(homie, serializer.save())
         except Exception as e:
