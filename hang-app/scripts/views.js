@@ -69,11 +69,14 @@ export function renderSuggestPage() {
 export function renderVotePage() {
     let container = document.createElement("div");
     container.innerHTML = /*html*/ `
-`;
+
+    `;
 }
 
 export function renderResultPage() {
     let container = document.createElement("div");
     container.innerHTML = /*html*/ `
-`;
+    <div class="resultContainer box">
+    </div>
+    `;
 }
