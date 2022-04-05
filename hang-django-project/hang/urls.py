@@ -41,6 +41,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path('', include('hangapp.urls')),
+    path('', include('frontend.urls')),
     path('admin/', admin.site.urls),
 
     # REST API stuff
