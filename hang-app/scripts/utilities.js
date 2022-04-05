@@ -4,6 +4,17 @@ import Cookies from './js.cookie.mjs';
 const baseApiUrl = "http://localhost:8000/api/";
 
 
+/// Front-end Utility Functions
+export function getElement(id) {
+    return document.getElementById(id);
+}
+
+export function addClickListener(id, callback){
+    getElement(id).addEventListener('touchend', callback);
+    // getElement(id).addEventListener('click', callback);
+}
+
+
 /// API Calls
 export async function getAllOptions() {
     const url = baseApiUrl + "options/";

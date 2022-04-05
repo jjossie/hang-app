@@ -1,22 +1,26 @@
 import {navigate} from "./routing.js";
+import {addClickListener, getElement} from "./utilities.js"
 
 class Controller {
+
+    constructor(session){
+        this.session = session;
+    }
+
     registerEventListeners(){}
 }
 
 
 export class StartController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }
 
     registerEventListeners() {
-        document.getElementById("start__newHangoutButton").addEventListener('touchend', (e) => {
-            // displayPage(view.renderLoginPage());
+        addClickListener("start__newHangoutButton", (e) => {
             navigate("login");
         });
-        document.getElementById("start__joinHangoutButton").addEventListener('touchend', (e) => {
-            // displayPage(view.renderJoinPage());
+        addClickListener("start__joinHangoutButton", (e) => {
             navigate("join");
         });
     }
@@ -24,14 +28,13 @@ export class StartController extends Controller {
 }
 
 export class JoinController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }
 
     registerEventListeners() {
-        document.getElementById("join__joinHangoutButton").addEventListener('touchend', (e) => {
+        addClickListener("join__joinHangoutButton", (e) => {
             // API Request with the Join Code
-            // displayPage(view.renderLoginPage());
             navigate("login");
         });
     }
@@ -39,12 +42,16 @@ export class JoinController extends Controller {
 }
 
 export class LoginController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }   
 
     registerEventListeners(){
-        document.getElementById("login__loginButton").addEventListener('touchend', (e) => {
+        addClickListener("login__loginButton", (e) => {
+            // Set session username
+            const inputUsername = getElement("login__nameText").value;
+            this.session.setUsername(inputUsername);
+            this.session.joinHangout();
             // API Login Request
             // navigate("pickDecision");
         });
@@ -54,12 +61,12 @@ export class LoginController extends Controller {
 
 
 export class PickDecisionController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }   
     
     registerEventListeners(){
-        document.getElementById("decision__startButton").addEventListener('touchend', (e) => {
+        addClickListener("decision__startButton", (e) => {
             // API call?
             navigate("suggest");
         });
@@ -67,8 +74,8 @@ export class PickDecisionController extends Controller {
 }
 
 export class SuggestController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }
 
     registerEventListeners() {
@@ -78,8 +85,8 @@ export class SuggestController extends Controller {
 }
 
 export class VoteController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }
 
     registerEventListeners() {
@@ -89,8 +96,8 @@ export class VoteController extends Controller {
 }
 
 export class ResultController extends Controller {
-    constructor() {
-        super();
+    constructor(session) {
+        super(session);
     }
 
     registerEventListeners() {

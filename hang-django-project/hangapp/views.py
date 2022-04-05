@@ -55,16 +55,22 @@ def auth_user_entry(request) -> Response:
     try:
         username = request.data['username']
         # Check if the user exists
-        user = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
+        user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
         if user is not None:
             # Login as the user, which already exists in the database
             login(request, user)
-            return Response(data=f"Successfully logged in {username}", status=status.HTTP_200_OK)
+            data = {
+                "username": user.get_username()
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
         else:
             # User didn't exist already, so make a new one
             user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
             login(request, user)
-            return Response(data=f"Successfully created user {username}", status=status.HTTP_201_CREATED)
+            data = {
+                "username": user.get_username()
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response(e.__str__(), status=status.HTTP_400_BAD_REQUEST)
 
