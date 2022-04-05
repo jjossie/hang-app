@@ -15,7 +15,7 @@ import {
     SuggestController,
     VoteController
 } from "./controllers.js";
-import { joinHangout } from "./utilities.js";
+import {Session} from "./session.js";
 
 
 
@@ -26,37 +26,6 @@ function displayPage(page, controller) {
     controller.registerEventListeners();
 }
 
-
-/**
- * Represents the state of the user's session to be maintained
- * between calls and stuff and also possibly stored in LocalStorage
- */
-class Session {
-    constructor() {
-        this.username = "";
-        this.hangoutId = null;
-    }
-    setUsername(username) {
-        this.username = username;
-    }
-    getUsername() {
-        return this.username;
-    }
-
-    async joinHangout(){
-        const loginResponse = await joinHangout(this.username);
-        console.log(loginResponse);
-        console.log(this.username);
-
-        // if (!this.session.hangoutId){
-        //     // If we haven't specified a session to join, make a new one
-            
-        // } else {
-
-        // }
-    }
-
-}
 
 
 class Destination {

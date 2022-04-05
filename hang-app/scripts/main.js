@@ -1,5 +1,4 @@
 // import {displayPage, renderOptionCard, renderStartPage} from "./components.js";
-import {getAllOptions, joinHangout, voteOnOption} from "./utilities.js";
 import { navigate } from "./routing.js";
 
 const contentContainer = document.getElementById("contentContainer");

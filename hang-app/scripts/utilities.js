@@ -1,7 +1,6 @@
 import Cookies from './js.cookie.mjs';
 
 
-const baseApiUrl = "http://localhost:8000/api/";
 
 
 /// Front-end Utility Functions
@@ -27,77 +26,8 @@ export async function getAllOptions() {
     }
 }
 
-export async function joinHangout(username, code=null) {
-
-    // Cookies.remove('csrftoken');
-
-    const url = baseApiUrl + "join-hangout/";
-    const body = {
-        "username": username
-    };
-    if (code)
-        body.hangoutId = code;
-    const response = await djangoFetch(url, 'POST', body);
-    if (response.ok) {
-        return await response.json();
-    } else {
-        const error = await response.text();
-        throw Error(`some stuff went wrong:\n${response.status} ${error}`);
-    }
-}
-
-export async function voteOnOption(optionId, vote, timePassed) {
-    const url = baseApiUrl + "option-vote/" + optionId;
-    const body = {
-        "vote": vote,
-        "time_passed": timePassed
-    }
-    const response = await djangoFetch(url, 'POST', body);
-    if (response.ok) {
-        return await response.json();
-    } else {
-        throw Error(`could not vote on option: ${response.text().then(t => t)}`);
-    }
-}
-
 
 /// Utility functions
-async function djangoFetch(url, method, body) {
-
-    // This isn't working apparently because fetch() doesn't store cookies, so we're never actually getting the session stuff.
-    let csrfToken = Cookies.get('csrftoken');
-    console.log(`csrftoken: ${csrfToken}`);
-    // let sessionid = Cookies.get('sessionid')
-    let requestOptions;
-    if (csrfToken) {
-        requestOptions = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken,
-                // 'mode': 'same-origin'
-                // 'mode': 'no-cors'
-            },
-            body: JSON.stringify(body)
-        };
-    } else {
-        requestOptions = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'mode': 'same-origin'
-                // 'mode': 'no-cors'
-            },
-            body: JSON.stringify(body)
-        };
-    }
-    console.log(`requestOptions:`);
-    console.log(requestOptions);
-    return await fetch(url, requestOptions);
-}
-
 
 // Can't figure this one out. Idk how to work with XMLHttpRequests.
 // function djangoFetchX(url, method, body) {
