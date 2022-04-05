@@ -1,8 +1,12 @@
 from enum import Enum
 
+from django.contrib.auth import authenticate, login
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from rest_framework.request import Request
+
+from .custom_config import *
 
 
 # Create your models here.
@@ -45,7 +49,7 @@ class Option(models.Model):
         elif vote_detail.vote == Vote.NO:
             vote_weight = -1
         else:
-            assert(vote_detail.vote == Vote.NEUTRAL)
+            assert (vote_detail.vote == Vote.NEUTRAL)
             vote_weight = 0
 
         # TODO do something with the time_passed param
@@ -94,13 +98,6 @@ class Decision(models.Model):
         return True
 
 
-def get_or_create_homie(user: User):
-    if hasattr(user, 'homie'):
-        return user.homie
-    else:
-        return Homie.objects.create(pk=user, username=user.username)
-
-
 class Homie(models.Model):
     """Represents a single user of the web app. Currently, only used
     to identify who made a particular decision or option."""
@@ -110,6 +107,30 @@ class Homie(models.Model):
 
     def __str__(self):
         return self.username
+
+
+def get_homie(request: Request) -> Homie:
+    # Get the user from the request body
+    try:
+        username = request.data['username']
+    except KeyError:
+        raise KeyError("No username included in request")
+    # try to authenticate the user
+    user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
+    if user is not None:
+        # Login as the user, which already exists in the database
+        # *** This might not be necessary since we are still authenticating on every request. ***
+        login(request, user)
+    else:
+        # User didn't exist already, so make a new one
+        user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
+        # *** This might not be necessary since we are still authenticating on every request. ***
+        login(request, user)
+
+    if hasattr(user, 'homie'):
+        return user.homie
+    else:
+        return Homie.objects.create(pk=user.id, username=user.username)
 
 
 class HangoutSession(models.Model):
@@ -122,9 +143,9 @@ class HangoutSession(models.Model):
     def __str__(self):
         return f"Session created by {self.creator}"
 
-    def join_user(self, user):
-        self.users.add(user)
-        print(f"Just added user {user.username} to session {self.id}")
+    def join_homie(self, homie):
+        self.users.add(homie)
+        print(f"Just added homie {homie.username} to session {self.id}")
         print(self.users.all())
 
     def get_invite_link(self):

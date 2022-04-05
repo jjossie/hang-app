@@ -17,7 +17,8 @@ urlpatterns = [
     path('api/decision/<int:pk>', views.decision_detail),
     path('api/decision-add', views.create_decision),
     path('api/option-vote/<int:pk>', views.vote_on_option),
-    path('api/user-entry/', views.auth_user_entry),
+    path('api/join-hangout/', views.api_join_hangout),
+    path('api/join-hangout/<int:hangout_id>', views.api_join_hangout),
     path('api/user-exit/', views.logout_view),
 
     path('start', views.user_entry, name='startUser'),
@@ -34,3 +35,8 @@ urlpatterns = [
     path('vote/<int:option_id>/<int:user_id>', views.vote, name='vote'),
     path('results/<int:decision_id>', views.results, name="results"),
 ]
+
+
+
+
+

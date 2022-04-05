@@ -15,7 +15,7 @@ import {
     SuggestController,
     VoteController
 } from "./controllers.js";
-import { login } from "./utilities.js";
+import { joinHangout } from "./utilities.js";
 
 
 
@@ -44,12 +44,10 @@ class Session {
     }
 
     async joinHangout(){
-        const loginResponse = await login(this.username);
+        const loginResponse = await joinHangout(this.username);
         console.log(loginResponse);
-        if (loginResponse["username"] != this.username){
-            throw Error("Client/server username mismatch");
-        }
-        
+        console.log(this.username);
+
         // if (!this.session.hangoutId){
         //     // If we haven't specified a session to join, make a new one
             

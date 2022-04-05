@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import HangoutSession, Homie, Decision, Option, get_or_create_homie
+from .models import HangoutSession, Homie, Decision, Option, get_homie
 
 from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer
@@ -43,36 +43,58 @@ class DecisionViewSet(viewsets.ModelViewSet):
 
 
 # *** Function-based
-@csrf_exempt
+# @csrf_exempt
+# @api_view(['POST'])
+# def auth_user_entry(request) -> Response:
+#     """
+#     Given a username in the request, creates a new user (or maybe retrieves the existing one)
+#     and logs them into the session.
+#     """
+#     if request.user.is_authenticated:
+#         return Response(data=f"Already Logged In as {request.user.username}", status=status.HTTP_204_NO_CONTENT)
+#     try:
+#         username = request.data['username']
+#         # Check if the user exists
+#         user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
+#         if user is not None:
+#             # Login as the user, which already exists in the database
+#             login(request, user)
+#             data = {
+#                 "username": user.get_username()
+#             }
+#             return Response(data=data, status=status.HTTP_200_OK)
+#         else:
+#             # User didn't exist already, so make a new one
+#             user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
+#             login(request, user)
+#             data = {
+#                 "username": user.get_username()
+#             }
+#             return Response(data=data, status=status.HTTP_201_CREATED)
+#     except Exception as e:
+#         return Response(e.__str__(), status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
-def auth_user_entry(request) -> Response:
+def api_join_hangout(request, hangout_id=None) -> Response:
     """
-    Given a username in the request, creates a new user (or maybe retrieves the existing one)
-    and logs them into the session.
+    Two possible entry points: user who has a hangout ID they're trying to join, and one who needs to make one.
     """
-    if request.user.is_authenticated:
-        return Response(data=f"Already Logged In as {request.user.username}", status=status.HTTP_204_NO_CONTENT)
     try:
-        username = request.data['username']
-        # Check if the user exists
-        user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
-        if user is not None:
-            # Login as the user, which already exists in the database
-            login(request, user)
-            data = {
-                "username": user.get_username()
-            }
-            return Response(data=data, status=status.HTTP_200_OK)
-        else:
-            # User didn't exist already, so make a new one
-            user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
-            login(request, user)
-            data = {
-                "username": user.get_username()
-            }
-            return Response(data=data, status=status.HTTP_201_CREATED)
-    except Exception as e:
-        return Response(e.__str__(), status=status.HTTP_400_BAD_REQUEST)
+        homie = get_homie(request)
+    except KeyError as e:
+        return Response(data=e.__str__(), status=status.HTTP_400_BAD_REQUEST)
+    if hangout_id is None:
+        # User did not send a hangout_id, so we'll make one
+        hangout = HangoutSession.objects.create(creator=homie)
+    else:
+        # Get the hangoutSession the user requested to join
+        hangout = HangoutSession.objects.get(pk=hangout_id)
+    hangout.join_homie(homie)
+    data = {
+        "homieId": homie.pk,
+        "hangoutId": hangout.pk
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -94,7 +116,7 @@ def vote_on_option(request, pk) -> Response:
             print(request.user)
             print(request.user.username)
             print(request.user.is_authenticated)
-            homie = get_or_create_homie(request.user)
+            homie = get_homie(request.user)
             print(homie)
             option.vote(homie, serializer.save())
         except Exception as e:
@@ -176,7 +198,7 @@ def new_user_new_session(request):
     new_user = Homie.objects.create(username=username)
     new_user.save()
     session = HangoutSession.objects.create(creator=new_user)
-    session.join_user(new_user)
+    session.join_homie(new_user)
     session.save()
     return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
 
@@ -192,7 +214,7 @@ def new_user_join_session(request, session_id):
     new_user = Homie.objects.create(username=username)
     new_user.save()
     session = get_object_or_404(HangoutSession, pk=session_id)
-    session.join_user(new_user)
+    session.join_homie(new_user)
     return render(request, 'hangapp/join.html', {'session': session, 'user': new_user})
 
 

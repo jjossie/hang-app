@@ -27,14 +27,16 @@ export async function getAllOptions() {
     }
 }
 
-export async function login(username) {
+export async function joinHangout(username, code=null) {
 
     // Cookies.remove('csrftoken');
 
-    const url = baseApiUrl + "user-entry/";
+    const url = baseApiUrl + "join-hangout/";
     const body = {
         "username": username
     };
+    if (code)
+        body.hangoutId = code;
     const response = await djangoFetch(url, 'POST', body);
     if (response.ok) {
         return await response.json();
