@@ -18,6 +18,18 @@ body {
     height: 100%;
 }
 
+#errorBox {
+    position:fixed;
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+    background-color: var(--medium-red);
+    height: 40px;
+    border-radius: 20px;
+    color: var(--neutral);
+    text-align: center;
+}
+
 #contentContainer > div {
     height: 100%;
     display: flex;

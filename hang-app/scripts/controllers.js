@@ -1,5 +1,5 @@
 import {navigate} from "./routing.js";
-import {addClickListener, getElement} from "./utilities.js"
+import {addClickListener, displayError, getElement} from "./utilities.js"
 
 class Controller {
 
@@ -35,7 +35,13 @@ export class JoinController extends Controller {
     registerEventListeners() {
         addClickListener("join__joinHangoutButton", (e) => {
             // API Request with the Join Code
-            navigate("login");
+            const inputJoinCode = getElement("join__codeText").value
+            try{
+                this.session.joinHangout(inputJoinCode)
+                navigate("login");
+            } catch {
+                displayError("Join Code Invalid")
+            }
         });
     }
 

@@ -1,6 +1,15 @@
 import Cookies from './js.cookie.mjs';
 
-
+/// User Error Handling
+export function displayError(errorMessage){
+    const box = getElement("errorBox");
+    box.innerHTML = errorMessage;
+    box.hidden = false;
+    window.setTimeout(() => {
+        box.hidden = true;
+        box.innerHTML = "";
+    }, 3000);
+}
 
 
 /// Front-end Utility Functions
@@ -11,6 +20,18 @@ export function getElement(id) {
 export function addClickListener(id, callback){
     getElement(id).addEventListener('touchend', callback);
     // getElement(id).addEventListener('click', callback);
+}
+
+export function displayPage(page, controller) {
+    const root = document.getElementById("contentContainer");
+    root.innerHTML = "";
+    root.appendChild(page());
+    controller.registerEventListeners();
+}
+
+export function overwritePage(page){
+    const root = document.getElementsByTagName("body")[0];
+    root.innerHTML = page;
 }
 
 

@@ -1,4 +1,5 @@
 import Cookies from './js.cookie.mjs';
+import { overwritePage } from './utilities.js';
 
 const baseApiUrl = "http://localhost:8000/api/";
 
@@ -19,11 +20,12 @@ const baseApiUrl = "http://localhost:8000/api/";
         return this.username;
     }
 
-    async joinHangout() {
+    async joinHangout(hangoutId) {
         let url = baseApiUrl + "join-hangout/";
         // Add the hangoutID to the request if necessary
-        if (this.hangoutId)
-            url += this.hangoutId
+        if (hangoutId)
+            url += hangoutId
+        
         const body = {
             "username": this.username
         };
@@ -40,7 +42,8 @@ const baseApiUrl = "http://localhost:8000/api/";
                 });
         } else {
             const error = await response.text();
-            throw Error(`some stuff went wrong:\n${response.status} ${error}`);
+            overwritePage(error);
+            throw Error(`some stuff went wrong:\n${response.status}`);
         }
     }
 

@@ -16,15 +16,7 @@ import {
     VoteController
 } from "./controllers.js";
 import {Session} from "./session.js";
-
-
-
-function displayPage(page, controller) {
-    const root = document.getElementById("contentContainer");
-    root.innerHTML = "";
-    root.appendChild(page());
-    controller.registerEventListeners();
-}
+import {displayPage, overwritePage} from "./utilities.js";
 
 
 
