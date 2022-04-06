@@ -10,7 +10,7 @@ class VoteDetailSerializer(serializers.Serializer):
         return VoteDetail(**validated_data)
 
 
-class OptionSerializer(serializers.HyperlinkedModelSerializer):
+class OptionSerializer(serializers.ModelSerializer):
     decision = serializers.HyperlinkedRelatedField(read_only=True, view_name='decision-detail')
 
     class Meta:
@@ -18,21 +18,21 @@ class OptionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['optionText', 'decision']
 
 
-class DecisionSerializer(serializers.HyperlinkedModelSerializer):
-    session = serializers.PrimaryKeyRelatedField(many=True, queryset=HangoutSession.objects.all())
+class DecisionSerializer(serializers.ModelSerializer):
+    session = serializers.PrimaryKeyRelatedField(many=False, queryset=HangoutSession.objects.all())
 
     class Meta:
         model = Decision
         fields = ['decisionText', 'session']
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Homie
         fields = ['username']
 
 
-class HangoutSerializer(serializers.HyperlinkedModelSerializer):
+class HangoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = HangoutSession
         fields = ['']

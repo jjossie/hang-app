@@ -120,13 +120,23 @@ def add_decision(request) -> Response:
     print(data)
     # I don't think we need the user, but we do need to strip the data
     user = extract_user(data)
-    serializer = DecisionSerializer(data=data)
+    print(data)
+    new_data = {
+        "decisionText": data["decisionText"],
+        # "session": [HangoutSession.objects.get(pk=data['session'])]
+        # "session": HangoutSession.objects.get(pk=data['session'])
+        # "session": [data['session']],  # This is the only one that serializes correctly
+        "session": data['session'],
+    }
+    print(new_data)
+    serializer = DecisionSerializer(data=new_data)
     if serializer.is_valid():
         print("Decision Data serialized correctly")
         serializer.save()
         return Response(data=serializer.data,
                         status=status.HTTP_201_CREATED)
     else:
+        # serializer.
         return Response(data=f"Invalid Request body: {request.data}\n\n"
                              f"Errors: {serializer.errors}",
                         status=status.HTTP_400_BAD_REQUEST)

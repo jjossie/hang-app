@@ -73,7 +73,7 @@ export class Session {
         } else {
             const error = await response.text();
             // console.log(error);
-            overwritePage(error);
+            // overwritePage(error);
             console.log(JSON.parse(error));
             throw new ApiError(`Failed to add Decision:\n${response.statusText}`);
         }
