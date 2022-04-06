@@ -1,3 +1,10 @@
+/**
+ * Controller Classes, which will each be associated with a view. 
+ * Allows controlling DOM related behavior, including implementing 
+ * click listeners and triggering navigation.
+ */
+
+
 import {
     navigate
 } from "./routing.js";
@@ -69,8 +76,10 @@ export class LoginController extends Controller {
             const inputUsername = getElement("login__nameText").value;
             this.session.setUsername(inputUsername);
             if (this.session.startingNewSession)
-                this.session.joinHangout();
-            // navigate("pickDecision");
+                this.session.joinHangout()
+                    .then(() => {
+                        navigate("pickDecision");
+                    });
             else
                 navigate("join");
         });

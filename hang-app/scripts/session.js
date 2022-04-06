@@ -1,13 +1,18 @@
 import Cookies from './js.cookie.mjs';
-import {ApiError, displayError, overwritePage } from './utilities.js';
+import {
+    ApiError,
+    displayError,
+    overwritePage
+} from './utilities.js';
 
 const baseApiUrl = "http://localhost:8000/api/";
 
 /**
  * Represents the state of the user's session to be maintained
  * between calls and stuff and also possibly stored in LocalStorage.
+ * Contains all necessary methods for interacting with the backend.
  */
- export class Session {
+export class Session {
     constructor() {
         this.username = "";
         this.hangoutId = null;
@@ -26,7 +31,7 @@ const baseApiUrl = "http://localhost:8000/api/";
         // Add the hangoutID to the request if necessary
         if (hangoutId)
             url += hangoutId
-        
+
         const body = {
             "username": this.username
         };
@@ -34,7 +39,7 @@ const baseApiUrl = "http://localhost:8000/api/";
         if (response.ok) {
             response.json()
                 .then(responseData => {
-                    try{
+                    try {
                         this.hangoutId = responseData.hangoutId;
                         this.homieId = responseData.homieId;
                     } catch {
@@ -71,7 +76,7 @@ const baseApiUrl = "http://localhost:8000/api/";
 
         let csrfToken = Cookies.get('csrftoken');
         console.log(`csrftoken: ${csrfToken}`);
-        
+
         // Attach the locally stored Homie ID and Hangout ID if we have em.
         let sessionBody = body
         if (this.homieId)

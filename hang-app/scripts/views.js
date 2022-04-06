@@ -50,6 +50,7 @@ export function renderPickDecisionPage() {
         </div>
         <button id="decision__startButton">Start</button>
     `;
+    return container;
 }
 
 export function renderSuggestPage() {
@@ -64,6 +65,7 @@ export function renderSuggestPage() {
         </div>
         <button id="suggest__readyButton">Ready</button>
     `;
+    return container;
 }
 
 export function renderVotePage() {
@@ -71,6 +73,7 @@ export function renderVotePage() {
     container.innerHTML = /*html*/ `
 
     `;
+    return container;
 }
 
 export function renderResultPage() {
@@ -79,4 +82,5 @@ export function renderResultPage() {
     <div class="resultContainer box">
     </div>
     `;
+    return container;
 }
