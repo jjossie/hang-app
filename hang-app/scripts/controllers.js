@@ -1,13 +1,20 @@
-import {navigate} from "./routing.js";
-import {addClickListener, displayError, getElement} from "./utilities.js"
+import {
+    navigate
+} from "./routing.js";
+import {
+    addClickListener,
+    ApiError,
+    displayError,
+    getElement
+} from "./utilities.js"
 
 class Controller {
 
-    constructor(session){
+    constructor(session) {
         this.session = session;
     }
 
-    registerEventListeners(){}
+    registerEventListeners() {}
 }
 
 
@@ -21,7 +28,8 @@ export class StartController extends Controller {
             navigate("login");
         });
         addClickListener("start__joinHangoutButton", (e) => {
-            navigate("join");
+            this.session.startingNewSession = false;
+            navigate("login");
         });
     }
 
@@ -36,12 +44,15 @@ export class JoinController extends Controller {
         addClickListener("join__joinHangoutButton", (e) => {
             // API Request with the Join Code
             const inputJoinCode = getElement("join__codeText").value
-            try{
-                this.session.joinHangout(inputJoinCode)
-                navigate("login");
-            } catch {
-                displayError("Join Code Invalid")
-            }
+            this.session.joinHangout(inputJoinCode)
+                .then(() => {
+                    navigate("pickDecision");
+                })
+                .catch((e) => {
+                    console.log(e);
+                    if (e instanceof ApiError)
+                        displayError("Join Code Invalid");
+                });
         });
     }
 
@@ -50,16 +61,18 @@ export class JoinController extends Controller {
 export class LoginController extends Controller {
     constructor(session) {
         super(session);
-    }   
+    }
 
-    registerEventListeners(){
+    registerEventListeners() {
         addClickListener("login__loginButton", (e) => {
             // Set session username
             const inputUsername = getElement("login__nameText").value;
             this.session.setUsername(inputUsername);
-            this.session.joinHangout();
-            // API Login Request
+            if (this.session.startingNewSession)
+                this.session.joinHangout();
             // navigate("pickDecision");
+            else
+                navigate("join");
         });
     }
 
@@ -69,9 +82,9 @@ export class LoginController extends Controller {
 export class PickDecisionController extends Controller {
     constructor(session) {
         super(session);
-    }   
-    
-    registerEventListeners(){
+    }
+
+    registerEventListeners() {
         addClickListener("decision__startButton", (e) => {
             // API call?
             navigate("suggest");
@@ -85,7 +98,7 @@ export class SuggestController extends Controller {
     }
 
     registerEventListeners() {
-        
+
     }
 
 }
@@ -96,7 +109,7 @@ export class VoteController extends Controller {
     }
 
     registerEventListeners() {
-        
+
     }
 
 }
@@ -107,7 +120,7 @@ export class ResultController extends Controller {
     }
 
     registerEventListeners() {
-        
+
     }
 
 }

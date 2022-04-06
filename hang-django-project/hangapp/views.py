@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -88,7 +89,11 @@ def api_join_hangout(request, hangout_id=None) -> Response:
         hangout = HangoutSession.objects.create(creator=homie)
     else:
         # Get the hangoutSession the user requested to join
-        hangout = HangoutSession.objects.get(pk=hangout_id)
+        try:
+            hangout = HangoutSession.objects.get(pk=hangout_id)
+        except ObjectDoesNotExist:
+            return Response(data="Invalid Hangout ID", status=status.HTTP_400_BAD_REQUEST)
+
     hangout.join_homie(homie)
     data = {
         "homieId": homie.pk,

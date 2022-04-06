@@ -11,6 +11,13 @@ export function displayError(errorMessage){
     }, 3000);
 }
 
+export class ApiError extends Error {
+    constructor (message){
+        super(message);
+        this.name = "ApiError";
+    }
+}
+
 
 /// Front-end Utility Functions
 export function getElement(id) {

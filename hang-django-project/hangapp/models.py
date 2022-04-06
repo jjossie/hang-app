@@ -113,6 +113,7 @@ def get_homie(request: Request) -> Homie:
     # Get the user from the request body
     try:
         username = request.data['username']
+        print(username)
     except KeyError:
         raise KeyError("No username included in request")
     # try to authenticate the user
@@ -123,7 +124,10 @@ def get_homie(request: Request) -> Homie:
         login(request, user)
     else:
         # User didn't exist already, so make a new one
-        user = User.objects.create_user(username, password=DEFAULT_GLOBAL_PASSWORD)
+        try:
+            user = User.objects.create_user(username=username, password=DEFAULT_GLOBAL_PASSWORD)
+        except ValueError:
+            raise ValueError("get_homie(): request didn't provide a username")
         # *** This might not be necessary since we are still authenticating on every request. ***
         login(request, user)
 

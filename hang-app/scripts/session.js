@@ -1,5 +1,5 @@
 import Cookies from './js.cookie.mjs';
-import { overwritePage } from './utilities.js';
+import {ApiError, displayError, overwritePage } from './utilities.js';
 
 const baseApiUrl = "http://localhost:8000/api/";
 
@@ -12,6 +12,7 @@ const baseApiUrl = "http://localhost:8000/api/";
         this.username = "";
         this.hangoutId = null;
         this.homieId = null;
+        this.startingNewSession = true;
     }
     setUsername(username) {
         this.username = username;
@@ -37,13 +38,14 @@ const baseApiUrl = "http://localhost:8000/api/";
                         this.hangoutId = responseData.hangoutId;
                         this.homieId = responseData.homieId;
                     } catch {
-                        throw Error(`Unexpected response from ${url}`);
+                        throw new ApiError(`Unexpected response from ${url}`);
                     }
                 });
         } else {
             const error = await response.text();
-            overwritePage(error);
-            throw Error(`some stuff went wrong:\n${response.status}`);
+            // displayError(response.statusText)
+            // overwritePage(error);
+            throw new ApiError(`some stuff went wrong:\n${response.status}`);
         }
     }
 
@@ -57,7 +59,7 @@ const baseApiUrl = "http://localhost:8000/api/";
         if (response.ok) {
             return await response.json();
         } else {
-            throw Error(`could not vote on option: ${response.text().then(t => t)}`);
+            throw new ApiError(`could not vote on option: ${response.text().then(t => t)}`);
         }
     }
 
