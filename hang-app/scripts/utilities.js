@@ -15,6 +15,7 @@ export class ApiError extends Error {
     constructor (message){
         super(message);
         this.name = "ApiError";
+        this.errorPageText = null;
     }
 }
 
@@ -33,7 +34,7 @@ export function displayPage(page, controller) {
     const root = document.getElementById("contentContainer");
     root.innerHTML = "";
     root.appendChild(page());
-    controller.registerEventListeners();
+    controller.setup();
 }
 
 export function overwritePage(page){

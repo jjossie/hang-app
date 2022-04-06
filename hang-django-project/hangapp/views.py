@@ -121,19 +121,11 @@ def add_decision(request) -> Response:
     # I don't think we need the user, but we do need to strip the data
     user = extract_user(data)
     print(data)
-    new_data = {
-        "decisionText": data["decisionText"],
-        # "session": [HangoutSession.objects.get(pk=data['session'])]
-        # "session": HangoutSession.objects.get(pk=data['session'])
-        # "session": [data['session']],  # This is the only one that serializes correctly
-        "session": data['session'],
-    }
-    print(new_data)
-    serializer = DecisionSerializer(data=new_data)
+    serializer = DecisionSerializer(data=data)
     if serializer.is_valid():
         print("Decision Data serialized correctly")
         serializer.save()
-        return Response(data=serializer.data,
+        return Response(data=data,
                         status=status.HTTP_201_CREATED)
     else:
         # serializer.
@@ -151,11 +143,7 @@ def vote_on_option(request, pk) -> Response:
         print("Vote Detail serialized successfully")
         try:
             # This isn't done until the users stuff is figured out
-            # option.vote(Homie.objects.get(pk=3), serializer.save())
-            print(request.user)
-            print(request.user.username)
-            print(request.user.is_authenticated)
-            homie = get_homie(request.user)
+            homie = extract_user(request.data)
             print(homie)
             option.vote(homie, serializer.save())
         except Exception as e:

@@ -60,22 +60,26 @@ export class Session {
         }
     }
 
+    /**
+     *
+     * @param decisionText
+     * @returns {Promise<Response>}
+     */
     async addDecision(decisionText) {
         const url = baseApiUrl + "decision-add/";
-        // const hangoutUrl = baseApiUrl + "hangoutViewSet/" + this.hangoutId + "/";
         const body = {
             "decisionText": decisionText,
             "session": this.hangoutId
         };
         const response = await this.djangoFetch(url, 'POST', body);
         if (response.ok) {
-
+            return await response.json();
         } else {
             const error = await response.text();
-            // console.log(error);
-            // overwritePage(error);
             console.log(JSON.parse(error));
-            throw new ApiError(`Failed to add Decision:\n${response.statusText}`);
+            let apiError = new ApiError(`Failed to add Decision:\n${response.statusText}`);
+            apiError.errorPageText = error;
+            throw apiError;
         }
     }
 

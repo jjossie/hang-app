@@ -21,7 +21,7 @@ class Controller {
         this.session = session;
     }
 
-    registerEventListeners() {}
+    setup() {}
 }
 
 
@@ -30,7 +30,7 @@ export class StartController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
         addClickListener("start__newHangoutButton", (e) => {
             navigate("login");
         });
@@ -47,7 +47,7 @@ export class JoinController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
         addClickListener("join__joinHangoutButton", (e) => {
             // API Request with the Join Code
             const inputJoinCode = getElement("join__codeText").value
@@ -70,7 +70,7 @@ export class LoginController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
         addClickListener("login__loginButton", (e) => {
             // Set session username
             const inputUsername = getElement("login__nameText").value;
@@ -79,6 +79,12 @@ export class LoginController extends Controller {
                 this.session.joinHangout()
                     .then(() => {
                         navigate("pickDecision");
+                    })
+                    .catch(e => {
+                        if (e instanceof ApiError){
+                            displayErrorToast(e.message);
+                        }
+                        console.log(e);
                     });
             else
                 navigate("join");
@@ -93,7 +99,7 @@ export class PickDecisionController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
         const decisionTextBox = getElement("decision__decisionText");
         console.log(decisionTextBox);
         const suggestionChips = document.getElementsByClassName("chipView");
@@ -112,7 +118,9 @@ export class PickDecisionController extends Controller {
                         navigate("suggest");
                     })
                     .catch(e => {
-                        displayErrorToast(e);
+                        if (e instanceof ApiError){
+                            displayErrorToast(e.message);
+                        }
                         console.log(e);
                     });
             } else {
@@ -127,7 +135,7 @@ export class SuggestController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
 
     }
 
@@ -138,7 +146,7 @@ export class VoteController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
 
     }
 
@@ -149,7 +157,7 @@ export class ResultController extends Controller {
         super(session);
     }
 
-    registerEventListeners() {
+    setup() {
 
     }
 
