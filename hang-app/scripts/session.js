@@ -1,9 +1,5 @@
 import Cookies from './js.cookie.mjs';
-import {
-    ApiError,
-    displayError,
-    overwritePage
-} from './utilities.js';
+import {ApiError, overwritePage} from './utilities.js';
 
 const baseApiUrl = "http://localhost:8000/api/";
 
@@ -19,14 +15,24 @@ export class Session {
         this.homieId = null;
         this.startingNewSession = true;
     }
+
     setUsername(username) {
         this.username = username;
     }
+
     getUsername() {
         return this.username;
     }
 
-    async joinHangout(hangoutId) {
+    /**
+     * Tells the backend to join a user to a hangout. Also creates the user if they
+     * did not exist in the database already. If a hangoutId is not specified, it will
+     * call the appropriate API endpoint to create a new Hangout.
+     * @param hangoutId The ID of the hangout to be joined (entered by the user)
+     * @returns {Promise<void>} Resolves when the hangout is joined on the backend
+     * and a response with an OK status is received.
+     */
+    async joinHangout(hangoutId = null) {
         let url = baseApiUrl + "join-hangout/";
         // Add the hangoutID to the request if necessary
         if (hangoutId)
@@ -50,17 +56,43 @@ export class Session {
             const error = await response.text();
             // displayError(response.statusText)
             // overwritePage(error);
-            throw new ApiError(`some stuff went wrong:\n${response.status}`);
+            throw new ApiError(`Failed to log in:\n${response.status}`);
         }
     }
 
+    async addDecision(decisionText) {
+        const url = baseApiUrl + "decision-add/";
+        // const hangoutUrl = baseApiUrl + "hangoutViewSet/" + this.hangoutId + "/";
+        const body = {
+            "decisionText": decisionText,
+            "session": this.hangoutId
+        };
+        const response = await this.djangoFetch(url, 'POST', body);
+        if (response.ok) {
+
+        } else {
+            const error = await response.text();
+            // console.log(error);
+            overwritePage(error);
+            console.log(JSON.parse(error));
+            throw new ApiError(`Failed to add Decision:\n${response.statusText}`);
+        }
+    }
+
+    /**
+     * API Call to have a user vote on a particular option.
+     * @param optionId The option to vote on.
+     * @param vote an int: 0 for no, 1 for neutral, 2 for yes.
+     * @param timePassed The time it took the user to decide, in milliseconds.
+     * @returns {Promise<*>} Resolves on successful response from server.
+     */
     async voteOnOption(optionId, vote, timePassed) {
-        const url = baseApiUrl + "option-vote/" + optionId;
+        const url = baseApiUrl + "option-vote/" + optionId + "/";
         const body = {
             "vote": vote,
             "time_passed": timePassed
         }
-        const response = await djangoFetch(url, 'POST', body);
+        const response = await this.djangoFetch(url, 'POST', body);
         if (response.ok) {
             return await response.json();
         } else {
@@ -75,8 +107,7 @@ export class Session {
     async djangoFetch(url, method, body) {
 
         let csrfToken = Cookies.get('csrftoken');
-        console.log(`csrftoken: ${csrfToken}`);
-
+        console.log(csrfToken);
         // Attach the locally stored Homie ID and Hangout ID if we have em.
         let sessionBody = body
         if (this.homieId)
@@ -85,16 +116,20 @@ export class Session {
             sessionBody.hangoutId = this.hangoutId;
         let requestOptions = {
             method: method,
+            mode: 'cors',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
+                // 'Accept': 'application/json',
+                // 'Access-Control-Allow-Origin': 'http://localhost:5500',
+                'Access-Control-Allow-Credentials': 'true',
                 'X-CSRFToken': csrfToken,
                 // 'mode': 'same-origin'
-                // 'mode': 'no-cors'
+                // 'mode': 'cors'
             },
             body: JSON.stringify(sessionBody)
         };
-        console.log(`requestOptions:`);
+        console.log(`DjangoFetch(): Sending the following request:`);
         console.log(requestOptions);
         return await fetch(url, requestOptions);
     }

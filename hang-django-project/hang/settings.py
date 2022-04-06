@@ -47,7 +47,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -60,6 +60,20 @@ CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOWED_ORIGINS = [
 #     # 'http://localhost:5500',
 # ] # If this is used, then not need to use `CORS_ALLOW_ALL_ORIGINS = True`
+
+CORS_ALLOW_HEADERS = [
+    'Access-Control-Allow-Credentials',
+    'Access-Control-Allow-Origin',
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 ROOT_URLCONF = 'hang.urls'
 
@@ -132,9 +146,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Trial ground
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost',
-    'http://localhost:63342'
+    'https://127.0.0.1',
+    'http://127.0.0.1:63342',
+    'http://127.0.0.1:5500',
+    'https://127.0.0.1:5500',
+    'http://*.127.0.0.1:5500',
+    'https://*.127.0.0.1:5500',
 ]
+# CSRF_COOKIE_SECURE = True
+
 
 # Stuff for REST framework
 REST_FRAMEWORK = {

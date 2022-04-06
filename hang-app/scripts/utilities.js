@@ -1,7 +1,7 @@
 import Cookies from './js.cookie.mjs';
 
 /// User Error Handling
-export function displayError(errorMessage){
+export function displayErrorToast(errorMessage){
     const box = getElement("errorBox");
     box.innerHTML = errorMessage;
     box.hidden = false;

@@ -19,9 +19,11 @@ class OptionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class DecisionSerializer(serializers.HyperlinkedModelSerializer):
+    session = serializers.PrimaryKeyRelatedField(many=True, queryset=HangoutSession.objects.all())
+
     class Meta:
         model = Decision
-        fields = ['decisionText']
+        fields = ['decisionText', 'session']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,7 +32,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['username']
 
 
-class SessionSerializer(serializers.HyperlinkedModelSerializer):
+class HangoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HangoutSession
         fields = ['']

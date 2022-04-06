@@ -11,7 +11,7 @@ import {
 import {
     addClickListener,
     ApiError,
-    displayError,
+    displayErrorToast,
     getElement
 } from "./utilities.js"
 
@@ -58,7 +58,7 @@ export class JoinController extends Controller {
                 .catch((e) => {
                     console.log(e);
                     if (e instanceof ApiError)
-                        displayError("Join Code Invalid");
+                        displayErrorToast("Join Code Invalid");
                 });
         });
     }
@@ -106,10 +106,17 @@ export class PickDecisionController extends Controller {
         addClickListener("decision__startButton", (e) => {
             // API call?
             if (decisionTextBox.value){
-                // this.session.
-                navigate("suggest");
+                this.session.addDecision(decisionTextBox.value)
+                    .then(data => {
+                        console.log(data)
+                        navigate("suggest");
+                    })
+                    .catch(e => {
+                        displayErrorToast(e);
+                        console.log(e);
+                    });
             } else {
-                displayError("Enter a decision")
+                displayErrorToast("Enter a decision")
             }
         });
     }
