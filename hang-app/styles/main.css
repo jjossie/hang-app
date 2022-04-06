@@ -12,14 +12,14 @@
 
 html,
 body {
-    background-color: var(--light-blue);
+    background-color: var(--neutral);
     font-family: "M PLUS 1p", sans-serif;
     color: var(--dark-blue);
     height: 100%;
 }
 
 #errorBox {
-    position:fixed;
+    position: fixed;
     bottom: 15px;
     left: 15px;
     right: 15px;
@@ -47,8 +47,22 @@ body {
 
 .chipViewContainer {
     display: flex;
-    flex-direction: row;
-    overflow: scroll;
+    flex-wrap: wrap;
+    flex-direction: column;
+    overflow-x: auto;
+    /* Uncomment this to force the chips to scroll horizontally*/
+    /*height: 48px;*/
+}
+
+.chipView {
+    font-size: 10pt;
+    height: 32px;
+    line-height: 32px;
+    background-color: var(--light-blue);
+    color: var(--dark-blue);
+    width: auto;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .optionDetailCard {
@@ -57,9 +71,8 @@ body {
     width: 75%;
     height: 80%;
     margin: auto;
-    box-shadow: 0px 2px 5px 0px var(--dark-blue);
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
     padding: 30px;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -69,4 +82,54 @@ body {
     font-weight: 400;
     font-size: 20pt;
     text-align: center;
+}
+
+/**
+Generic Styles
+ */
+.box {
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    text-align: center;
+    margin: 4px;
+    padding: 0 8px;
+    border-radius: 16px;
+}
+
+input[type=text] {
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    text-align: center;
+    margin: 8px;
+    padding: 0 8px;
+    border-radius: 16px;
+    border-color: transparent;
+    height: 32px;
+}
+
+.buttonMedium {
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    background-color: var(--medium-blue);
+    color: var(--neutral);
+    margin: 4px;
+    padding: 8px 16px;
+    border-radius: 16px;
+    border-color: transparent;
+    height: 32px;
+    /*line-height: 32px;*/
+    text-align: center;
+    font-weight: lighter;
+}
+.buttonLarge {
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    background-color: var(--medium-blue);
+    color: var(--neutral);
+    margin: 8px;
+    padding: 8px 16px;
+    border-radius: 24px;
+    border-color: transparent;
+    height: 48px;
+    /*line-height: 48px;*/
+    text-align: center;
+    width: 64%;
+    font-size: 14pt;
+    font-weight: 700;
 }

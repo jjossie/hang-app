@@ -94,9 +94,23 @@ export class PickDecisionController extends Controller {
     }
 
     registerEventListeners() {
+        const decisionTextBox = getElement("decision__decisionText");
+        console.log(decisionTextBox);
+        const suggestionChips = document.getElementsByClassName("chipView");
+        for (let chip of suggestionChips){
+            chip.addEventListener('touchend', () => {
+                decisionTextBox.value = chip.innerHTML;
+            });
+        }
+
         addClickListener("decision__startButton", (e) => {
             // API call?
-            navigate("suggest");
+            if (decisionTextBox.value){
+                // this.session.
+                navigate("suggest");
+            } else {
+                displayError("Enter a decision")
+            }
         });
     }
 }

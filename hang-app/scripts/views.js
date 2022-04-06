@@ -10,8 +10,8 @@ import {
 export function renderStartPage() {
     let container = document.createElement("div");
     container.innerHTML = /*html*/ `
-        <button id="start__newHangoutButton" class="buttonBig">New Hangout</button>
-        <button id="start__joinHangoutButton" class="buttonBig">Join Hangout</button>
+        <button id="start__newHangoutButton" class="buttonLarge">New Hangout</button>
+        <button id="start__joinHangoutButton" class="buttonLarge">Join Hangout</button>
     `;
     return container;
 }
@@ -41,14 +41,15 @@ export function renderPickDecisionPage() {
     container.innerHTML = /*html*/ `
         <h2>What are we deciding on?</h2>
         <div class="suggestionBox flexDown">
-            <div id="decisionSuggestionContainer" class="chipViewContainer">
-                <div class="chipView">Where should we go eat?</div>
-                <div class="chipView">What movie should we watch?</div>
-                <div class="chipView">Where should we hang out?</div>
+            <div id="decision__SuggestionContainer" class="chipViewContainer">
+                <div class="chipView box">Where should we go eat?</div>
+                <div class="chipView box">What movie should we watch?</div>
+                <div class="chipView box">Where should we hang out?</div>
             </div>
-            <input type="text" name="decisionText" id="decision__decisionText" />
+            <input type="text" name="decisionText" id="decision__decisionText"
+             placeholder="Write your own..."/>
         </div>
-        <button id="decision__startButton">Start</button>
+        <button id="decision__startButton" class="buttonMedium">Start</button>
     `;
     return container;
 }
@@ -63,7 +64,7 @@ export function renderSuggestPage() {
             </div>
             <input type="text" name="optionText" id="suggest__optionText" />
         </div>
-        <button id="suggest__readyButton">Ready</button>
+        <button id="suggest__readyButton" class="buttonMedium">Ready</button>
     `;
     return container;
 }
