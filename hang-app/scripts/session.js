@@ -61,9 +61,9 @@ export class Session {
     }
 
     /**
-     *
-     * @param decisionText
-     * @returns {Promise<Response>}
+     * Adds a new decision to be associated with the HangoutSession.
+     * @param decisionText The user-entered text describing the hangout decision to be made.
+     * @returns {Promise<Response>} Resolves on successful response from the server.
      */
     async addDecision(decisionText) {
         const url = baseApiUrl + "decision-add/";
@@ -78,6 +78,20 @@ export class Session {
             const error = await response.text();
             console.log(JSON.parse(error));
             let apiError = new ApiError(`Failed to add Decision:\n${response.statusText}`);
+            apiError.errorPageText = error;
+            throw apiError;
+        }
+    }
+
+    async getHangoutDecision() {
+        const url = baseApiUrl + "hangout/" + this.hangoutId + "/decision/";
+        const response = await this.djangoFetch(url, 'GET', null)
+        if (response.ok)
+            return await response.json();
+        else{
+            const error = await response.text();
+            console.log(JSON.parse(error));
+            let apiError = new ApiError(`Failed to get Decision:\n${response.statusText}`);
             apiError.errorPageText = error;
             throw apiError;
         }
@@ -113,11 +127,6 @@ export class Session {
         let csrfToken = Cookies.get('csrftoken');
         console.log(csrfToken);
         // Attach the locally stored Homie ID and Hangout ID if we have em.
-        let sessionBody = body
-        if (this.homieId)
-            sessionBody.homieId = this.homieId;
-        if (this.hangoutId)
-            sessionBody.hangoutId = this.hangoutId;
         let requestOptions = {
             method: method,
             mode: 'cors',
@@ -131,8 +140,15 @@ export class Session {
                 // 'mode': 'same-origin'
                 // 'mode': 'cors'
             },
-            body: JSON.stringify(sessionBody)
         };
+        if (body){
+            let sessionBody = body
+            if (this.homieId)
+                sessionBody.homieId = this.homieId;
+            if (this.hangoutId)
+                sessionBody.hangoutId = this.hangoutId;
+            requestOptions.body = JSON.stringify(sessionBody);
+        }
         console.log(`DjangoFetch(): Sending the following request:`);
         console.log(requestOptions);
         return await fetch(url, requestOptions);

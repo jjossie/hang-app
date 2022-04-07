@@ -7,13 +7,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import HangoutSession, Homie, Decision, Option, get_homie
+from .models import HangoutSession, Homie, Decision, Option
 
 from rest_framework import viewsets, status
 from .serializers import OptionSerializer, DecisionSerializer, VoteDetailSerializer, HangoutSerializer
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.renderers import JSONRenderer
 
 from .custom_config import *
 from .utilities import extract_user
@@ -87,7 +88,7 @@ def api_join_hangout(request, hangout_id=None) -> Response:
     Two possible entry points: user who has a hangout ID they're trying to join, and one who needs to make one.
     """
     try:
-        homie = get_homie(request)
+        homie = Homie.get_homie_from_request(request)
     except KeyError as e:
         return Response(data=e.__str__(), status=status.HTTP_400_BAD_REQUEST)
     if hangout_id is None:
@@ -132,6 +133,20 @@ def add_decision(request) -> Response:
         return Response(data=f"Invalid Request body: {request.data}\n\n"
                              f"Errors: {serializer.errors}",
                         status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_decision_for_hangout(request, pk) -> Response:
+    # homie = extract_user(request.data)  # Actually I don't think we need this
+    hangout = get_object_or_404(HangoutSession, pk=pk)
+    # serializer = HangoutSerializer(hangout)
+    decision = hangout.decision_set.all()[0]
+    serializer = DecisionSerializer(decision)
+    return Response(
+        # data=JSONRenderer().render(serializer.data),
+        data=serializer.data,
+        status=status.HTTP_200_OK
+    )
 
 
 # @login_required
@@ -182,7 +197,6 @@ def decision_detail(request, pk) -> Response:
         # Delete a decision
         decision.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # Vanilla Django Views
 # Create your views here.

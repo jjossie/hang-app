@@ -108,33 +108,33 @@ class Homie(models.Model):
     def __str__(self):
         return self.username
 
-
-def get_homie(request: Request) -> Homie:
-    # Get the user from the request body
-    try:
-        username = request.data['username']
-        print(username)
-    except KeyError:
-        raise KeyError("No username included in request")
-    # try to authenticate the user
-    user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
-    if user is not None:
-        # Login as the user, which already exists in the database
-        # *** This might not be necessary since we are still authenticating on every request. ***
-        login(request, user)
-    else:
-        # User didn't exist already, so make a new one
+    @staticmethod
+    def get_homie_from_request(request: Request):
+        # Get the user from the request body
         try:
-            user = User.objects.create_user(username=username, password=DEFAULT_GLOBAL_PASSWORD)
-        except ValueError:
-            raise ValueError("get_homie(): request didn't provide a username")
-        # *** This might not be necessary since we are still authenticating on every request. ***
-        login(request, user)
+            username = request.data['username']
+            print(username)
+        except KeyError:
+            raise KeyError("No username included in request")
+        # try to authenticate the user
+        user: User = authenticate(request, username=username, password=DEFAULT_GLOBAL_PASSWORD)
+        if user is not None:
+            # Login as the user, which already exists in the database
+            # *** This might not be necessary since we are still authenticating on every request. ***
+            login(request, user)
+        else:
+            # User didn't exist already, so make a new one
+            try:
+                user = User.objects.create_user(username=username, password=DEFAULT_GLOBAL_PASSWORD)
+            except ValueError:
+                raise ValueError("get_homie(): request didn't provide a username")
+            # *** This might not be necessary since we are still authenticating on every request. ***
+            login(request, user)
 
-    if hasattr(user, 'homie'):
-        return user.homie
-    else:
-        return Homie.objects.create(pk=user.id, username=user.username)
+        if hasattr(user, 'homie'):
+            return user.homie
+        else:
+            return Homie.objects.create(pk=user.id, username=user.username)
 
 
 class HangoutSession(models.Model):

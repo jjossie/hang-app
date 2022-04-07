@@ -33,6 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class HangoutSerializer(serializers.ModelSerializer):
+
+
     class Meta:
         model = HangoutSession
         fields = ['']

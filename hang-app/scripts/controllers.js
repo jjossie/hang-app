@@ -136,6 +136,17 @@ export class SuggestController extends Controller {
     }
 
     setup() {
+        this.session.getHangoutDecision()
+            .then( data => {
+                console.log(data);
+                getElement("suggest__decisionTitle").innerHTML = data['decisionText'];
+            })
+            .catch(e => {
+                if (e instanceof ApiError)
+                    displayErrorToast(e.message);
+                console.log(e);
+            })
+
 
     }
 
