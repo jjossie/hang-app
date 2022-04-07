@@ -101,7 +101,6 @@ export class PickDecisionController extends Controller {
 
     setup() {
         const decisionTextBox = getElement("decision__decisionText");
-        console.log(decisionTextBox);
         const suggestionChips = document.getElementsByClassName("chipView");
         for (let chip of suggestionChips){
             chip.addEventListener('touchend', () => {
@@ -136,17 +135,20 @@ export class SuggestController extends Controller {
     }
 
     setup() {
+        // Get the Decision Title
+        let decision = {};
         this.session.getHangoutDecision()
             .then( data => {
                 console.log(data);
+                decision = data;
                 getElement("suggest__decisionTitle").innerHTML = data['decisionText'];
             })
             .catch(e => {
                 if (e instanceof ApiError)
                     displayErrorToast(e.message);
                 console.log(e);
-            })
-
+            });
+        let options = [];
 
     }
 

@@ -1,5 +1,5 @@
 import Cookies from './js.cookie.mjs';
-import {ApiError, overwritePage} from './utilities.js';
+import {ApiError} from './utilities.js';
 
 const baseApiUrl = "http://localhost:8000/api/";
 
@@ -41,23 +41,21 @@ export class Session {
         const body = {
             "username": this.username
         };
-        const response = await this.djangoFetch(url, 'POST', body);
-        if (response.ok) {
-            response.json()
-                .then(responseData => {
-                    try {
-                        this.hangoutId = responseData.hangoutId;
-                        this.homieId = responseData.homieId;
-                    } catch {
-                        throw new ApiError(`Unexpected response from ${url}`);
-                    }
-                });
-        } else {
-            const error = await response.text();
-            // displayError(response.statusText)
-            // overwritePage(error);
-            throw new ApiError(`Failed to log in:\n${response.status}`);
-        }
+        const jsonData = await this.djangoFetch(url, 'POST', body,
+            "Failed to log in")
+            .then(responseData => {
+                // This might need refactoring still
+                try {
+                    this.hangoutId = responseData.hangoutId;
+                    this.homieId = responseData.homieId;
+                } catch {
+                    throw new ApiError(`Unexpected response from ${url}`);
+                }
+            })
+            .catch(e => {
+                console.log("ok something really went wrong: ");
+                console.log(e);
+            });
     }
 
     /**
@@ -71,30 +69,24 @@ export class Session {
             "decisionText": decisionText,
             "session": this.hangoutId
         };
-        const response = await this.djangoFetch(url, 'POST', body);
-        if (response.ok) {
-            return await response.json();
-        } else {
-            const error = await response.text();
-            console.log(JSON.parse(error));
-            let apiError = new ApiError(`Failed to add Decision:\n${response.statusText}`);
-            apiError.errorPageText = error;
-            throw apiError;
-        }
+        return await this.djangoFetch(url, 'POST', body,
+            "Failed to add Decision");
     }
 
+    /**
+     * Gets the (first) Decision associated with this Session's Hangout.
+     * @returns {Promise<any>} Resolves to a Decision object, serialized from the backend.
+     */
     async getHangoutDecision() {
         const url = baseApiUrl + "hangout/" + this.hangoutId + "/decision/";
-        const response = await this.djangoFetch(url, 'GET', null)
-        if (response.ok)
-            return await response.json();
-        else{
-            const error = await response.text();
-            console.log(JSON.parse(error));
-            let apiError = new ApiError(`Failed to get Decision:\n${response.statusText}`);
-            apiError.errorPageText = error;
-            throw apiError;
-        }
+        return await this.djangoFetch(url, 'GET', null,
+            "Failed to get Decision")
+    }
+
+    async getOptionsForDecision(decisionId) {
+        const url = baseApiUrl + "decision/" + decisionId + "/options/";
+        return await this.djangoFetch(url, 'GET', null,
+            "Failed to get Options for Decision");
     }
 
     /**
@@ -110,19 +102,19 @@ export class Session {
             "vote": vote,
             "time_passed": timePassed
         }
-        const response = await this.djangoFetch(url, 'POST', body);
-        if (response.ok) {
-            return await response.json();
-        } else {
-            throw new ApiError(`could not vote on option: ${response.text().then(t => t)}`);
-        }
+        return await this.djangoFetch(url, 'POST', body, "could not vote on option");
     }
 
     /**
      * Helper function for performing fetch operations on the API which
-     * includes the Session's Homie ID and Hangout ID with each request.
+     * includes this Session's Homie ID and Hangout ID with each request.
+     * @param url The URL to send the Request to.
+     * @param method String representation of the HTTP method, e.g. 'GET'
+     * @param body The data payload for POST/PUT requests, null for GET requests.
+     * @param errorMessage Message to display to the log and/or the user if something goes wrong.
+     * @returns {Promise<any>} Returns a promise of the server's response in JSON.
      */
-    async djangoFetch(url, method, body) {
+    async djangoFetch(url, method, body, errorMessage) {
 
         let csrfToken = Cookies.get('csrftoken');
         console.log(csrfToken);
@@ -141,7 +133,7 @@ export class Session {
                 // 'mode': 'cors'
             },
         };
-        if (body){
+        if (body) {
             let sessionBody = body
             if (this.homieId)
                 sessionBody.homieId = this.homieId;
@@ -151,7 +143,16 @@ export class Session {
         }
         console.log(`DjangoFetch(): Sending the following request:`);
         console.log(requestOptions);
-        return await fetch(url, requestOptions);
+        const response = await fetch(url, requestOptions);
+        if (response.ok)
+            return await response.json();
+        else {
+            const error = await response.text();
+            console.log(JSON.parse(error));
+            let apiError = new ApiError(`${errorMessage}:\n${response.statusText}`);
+            apiError.errorPageText = error;
+            throw apiError;
+        }
     }
 
 }
