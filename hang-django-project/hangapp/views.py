@@ -202,7 +202,8 @@ def are_homies_ready(request, hangout_pk):
 @api_view(['POST'])
 def ready_up_homie(request):
     user = extract_user(request.data)
-    user.is_ready = True
+    user.ready_up()
+    print(f"View ready_up_homie(): user {user} is ready: {user.is_ready}")
     return Response(data={"message": f"homie {user.username} readied up"},
                     status=status.HTTP_202_ACCEPTED)
 

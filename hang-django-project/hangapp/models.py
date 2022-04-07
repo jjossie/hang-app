@@ -109,6 +109,10 @@ class Homie(models.Model):
     def __str__(self):
         return self.username
 
+    def ready_up(self):
+        self.is_ready = True
+        self.save()
+
     @staticmethod
     def get_homie_from_request(request: Request):
         # Get the user from the request body
@@ -151,10 +155,12 @@ class HangoutSession(models.Model):
     def join_homie(self, homie):
         self.users.add(homie)
         print(f"Just added homie {homie.username} to session {self.id}")
-        print(self.users.all())
+        print(self.users.all().values())
 
     def are_homies_ready(self):
+        print("Checking if the homies are ready:")
         for homie in self.users.all():
+            print(f"{homie.username} is ready: {homie.is_ready}")
             if not homie.is_ready:
                 return False
         return True

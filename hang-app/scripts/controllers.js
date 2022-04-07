@@ -215,7 +215,8 @@ export class SuggestController extends Controller {
             // API Call to ready up
             console.log("Readying up on the frontend");
             this.session.readyUpHomie()
-                .then(() => {
+                .then((response) => {
+                    console.log(response);
                     console.log("Readied up on the backend");
                     thisInstance.ready = true;
                     thisInstance.refresh();
