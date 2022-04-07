@@ -167,6 +167,29 @@ def get_options_for_decision(request, pk) -> Response:
     )
 
 
+@api_view(['POST'])
+def add_option(request, decision_pk) -> Response:
+    decision = get_object_or_404(Decision, pk=decision_pk)
+    user = extract_user(request.data)
+    try:
+        option_text = request.data['optionText']
+    except KeyError:
+        return Response(data={"message": f"request body missing parameter optionText."},
+                        status=status.HTTP_400_BAD_REQUEST)
+    option = Option.objects.create(
+        decision=decision,
+        author=user,
+        optionText=option_text
+    )
+    # TODO figure out how to return the option in the response
+    # serializer = OptionSerializer(option)
+    return Response(
+        # data=serializer.data
+        data={"message": "successfully created"},
+        status=status.HTTP_201_CREATED
+    )
+
+
 # @login_required
 @api_view(['POST'])
 def vote_on_option(request, pk) -> Response:

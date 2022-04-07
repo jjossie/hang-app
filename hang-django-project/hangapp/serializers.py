@@ -11,7 +11,8 @@ class VoteDetailSerializer(serializers.Serializer):
 
 
 class OptionSerializer(serializers.ModelSerializer):
-    decision = serializers.HyperlinkedRelatedField(read_only=True, view_name='decision-detail')
+    decision = serializers.PrimaryKeyRelatedField(many=False,
+                                                  queryset=Decision.objects.all())
 
     class Meta:
         model = Option

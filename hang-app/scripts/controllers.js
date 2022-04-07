@@ -15,10 +15,18 @@ import {
     getElement
 } from "./utilities.js"
 
+const REFRESH_INTERVAL = 500;
+
 class Controller {
 
     constructor(session) {
         this.session = session;
+    }
+
+    registerListeners() {
+    }
+
+    refreshView() {
     }
 
     setup() {
@@ -130,6 +138,7 @@ export class PickDecisionController extends Controller {
     }
 }
 
+
 export class SuggestController extends Controller {
     constructor(session) {
         super(session);
@@ -137,9 +146,9 @@ export class SuggestController extends Controller {
         this.options = [];
     }
 
-    setup() {
+    refreshView() {
+        console.log("RefreshView() called");
         // Get the Decision Title
-
         this.session.getHangoutDecision()
             .then(data => {
                 console.log(data);
@@ -150,6 +159,7 @@ export class SuggestController extends Controller {
             .then(() => {
                 console.log(this.decision);
                 console.log(this.decision['decisionId']);
+                // Get all the options
                 this.session.getOptionsForDecision(this.decision['decisionId'])
                     .then(jsonData => {
                         for (let option of jsonData['options']) {
@@ -162,10 +172,39 @@ export class SuggestController extends Controller {
                     displayErrorToast(e.message);
                 console.log(e);
             });
-        // Get all the options
-
     }
 
+    registerListeners() {
+        let thisInstance = this;
+        const form = getElement('suggest__submitSuggestionForm');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            // API call to add Options
+            const optionText = getElement("suggest__optionText").value;
+            if (optionText) {
+                this.session.addOptionForDecision(this.decision['decisionId'], optionText)
+                    .then(() => {
+                        thisInstance.refreshView();
+                    })
+                    .catch();
+            } else {
+                displayErrorToast("Option can't be empty");
+            }
+        });
+        addClickListener("suggest__readyButton", () => {
+            // TODO API Call to ready up
+            navigate("vote");
+        });
+    }
+
+    setup() {
+        let thisInstance = this;
+        this.refreshView();
+        this.registerListeners();
+        window.setTimeout(() => {
+            thisInstance.setup();
+        }, REFRESH_INTERVAL);
+    }
 }
 
 export class VoteController extends Controller {

@@ -23,6 +23,7 @@ urlpatterns = [
     # path('api/hangout/<int:pk>/', views.get_hangout_detail),
     path('api/hangout/<int:pk>/decision/', views.get_decision_for_hangout),
     # Options
+    path('api/option-add/<int:decision_pk>/', views.add_option),
     path('api/option-vote/<int:pk>/', views.vote_on_option),
     # Homies
     path('api/join-hangout/', views.api_join_hangout),

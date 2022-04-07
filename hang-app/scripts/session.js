@@ -105,6 +105,15 @@ export class Session {
         return await this.djangoFetch(url, 'POST', body, "could not vote on option");
     }
 
+    async addOptionForDecision(decisionId, optionText) {
+        const url = baseApiUrl + "option-add/" + decisionId + "/";
+        const body = {
+            "optionText": optionText
+        }
+        return await this.djangoFetch(url, 'POST', body,
+            `Failed to add Option for Decision ${decisionId}`);
+    }
+
     /**
      * Helper function for performing fetch operations on the API which
      * includes this Session's Homie ID and Hangout ID with each request.

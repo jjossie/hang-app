@@ -84,6 +84,16 @@ body {
     text-align: center;
 }
 
+#suggest__submitSuggestionButton {
+    width: 36px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: var(--medium-red);
+    padding: 0;
+    margin: 0;
+    border: transparent;
+}
+
 /**
 Generic Styles
  */
@@ -95,15 +105,6 @@ Generic Styles
     border-radius: 16px;
 }
 
-input[type=text] {
-    box-shadow: 0 2px 5px 0 var(--dark-blue);
-    text-align: center;
-    margin: 8px;
-    padding: 0 8px;
-    border-radius: 16px;
-    border-color: transparent;
-    height: 32px;
-}
 
 .buttonMedium {
     box-shadow: 0 2px 5px 0 var(--dark-blue);
@@ -133,3 +134,15 @@ input[type=text] {
     font-size: 14pt;
     font-weight: 700;
 }
+
+input[type=text] {
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    text-align: center;
+    margin: 8px;
+    padding: 0 8px;
+    border-radius: 16px;
+    border-color: transparent;
+    height: 32px;
+    /*width: 80%;*/
+}
+

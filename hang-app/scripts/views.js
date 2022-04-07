@@ -1,5 +1,5 @@
 /***
- * Functions representing views. Each one returns a Div Element that will 
+ * Functions representing views. Each one returns a Div Element that will
  * replace the contentContainer of index.html.
  */
 
@@ -47,7 +47,7 @@ export function renderPickDecisionPage() {
                 <div class="chipView box">Where should we hang out?</div>
             </div>
             <input type="text" name="decisionText" id="decision__decisionText"
-             placeholder="Write your own..."/>
+            placeholder="Write your own..."/>
         </div>
         <button id="decision__startButton" class="buttonMedium">Start</button>
     `;
@@ -59,10 +59,15 @@ export function renderSuggestPage() {
     container.innerHTML = /*html*/ `
         <h2 id="suggest__decisionTitle" class="userGeneratedTitle"></h2>
         <div class="suggestionBox">
-            <div id="suggest__optionList" class="chipView flexDown">
-
+            <div id="suggest__optionList" class="box flexDown">
+                
             </div>
-            <input type="text" name="optionText" id="suggest__optionText" />
+            <form id="suggest__submitSuggestionForm">
+                <input type="text" name="optionText" id="suggest__optionText" 
+                placeholder="Suggest an option..."/>
+                <button type="submit" id="suggest__submitSuggestionButton"
+                class="box">+</button>
+            </form>
         </div>
         <button id="suggest__readyButton" class="buttonMedium">Ready</button>
     `;
