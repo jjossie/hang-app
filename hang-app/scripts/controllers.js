@@ -16,7 +16,7 @@ import {
 } from "./utilities.js"
 import {renderOptionListItem} from "./components.js";
 
-const REFRESH_INTERVAL = 500000000;
+const REFRESH_INTERVAL = 5000;
 
 class Controller {
 
@@ -123,7 +123,7 @@ export class PickDecisionController extends Controller {
             if (decisionTextBox.value) {
                 this.session.addDecision(decisionTextBox.value)
                     .then(data => {
-                        console.log(data);
+                        // console.log(data);
                         navigate("suggest");
                     })
                     .catch(e => {
@@ -143,8 +143,14 @@ export class PickDecisionController extends Controller {
 export class SuggestController extends Controller {
     constructor(session) {
         super(session);
+        // TODO move all these attributes into Session
+        //  (Session is like the repository/ViewModel, whereas Controllers
+        //  are like the Activity/Fragment classes in Android). They shouldn't
+        //  hold data, just control behavior.
         this.decision = {};
         this.options = [];
+        this.ready = false;
+        this.timeoutIds = [];
     }
 
     refreshView() {
@@ -161,6 +167,7 @@ export class SuggestController extends Controller {
                 // Get all the options
                 this.session.getOptionsForDecision(this.decision['decisionId'])
                     .then(jsonData => {
+                        // Display all the options
                         listContainer.innerHTML = "";
                         console.log("JSON DATA: ");
                         console.log(jsonData);
@@ -175,6 +182,11 @@ export class SuggestController extends Controller {
                     displayErrorToast(e.message);
                 console.log(e);
             });
+        if (this.ready) {
+            const readyButton = getElement("suggest__readyButton");
+            readyButton.innerHTML = "Waiting for others...";
+            readyButton.classList.add("greyedOut");
+        }
     }
 
     registerListeners() {
@@ -183,30 +195,66 @@ export class SuggestController extends Controller {
         form.addEventListener('submit', e => {
             e.preventDefault();
             // API call to add Options
-            const optionText = getElement("suggest__optionText").value;
+            const optionTextBox = getElement("suggest__optionText");
+            const optionText = optionTextBox.value;
             if (optionText) {
                 this.session.addOptionForDecision(this.decision['decisionId'], optionText)
                     .then(() => {
-                        thisInstance.refreshView();
+                        // Clear the text input field
+                        optionTextBox.value = "";
+                        thisInstance.refresh();
                     })
-                    .catch();
+                    .catch(e => {
+                        console.log(e);
+                    });
             } else {
                 displayErrorToast("Option can't be empty");
             }
         });
         addClickListener("suggest__readyButton", () => {
-            // TODO API Call to ready up
-            navigate("vote");
+            // API Call to ready up
+            console.log("Readying up on the frontend");
+            this.session.readyUpHomie()
+                .then(() => {
+                    console.log("Readied up on the backend");
+                    thisInstance.ready = true;
+                    thisInstance.refresh();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         });
     }
 
-    setup() {
+    refresh() {
         let thisInstance = this;
+        if (this.ready) {
+            this.session.areHomiesReady()
+                .then(result => {
+                    console.log(result);
+                    if (result['areHomiesReady']){
+                        console.log("Everyone's ready!");
+                        // Clear timers
+                        this.timeoutIds.forEach(id => {
+                            clearTimeout(id);
+                        });
+                        this.timeoutIds = [];
+                        navigate("vote");
+                    }
+                });
+        }
         this.refreshView();
-        this.registerListeners();
-        window.setTimeout(() => {
-            thisInstance.setup();
+        // Don't re-register listeners
+        const timeoutId = window.setTimeout(() => {
+            thisInstance.refresh();
         }, REFRESH_INTERVAL);
+        this.timeoutIds.push(timeoutId);
+    }
+
+    setup() {
+        // Only Called Once, on View Load
+        this.registerListeners();
+        this.refresh();
     }
 }
 

@@ -190,6 +190,23 @@ def add_option(request, decision_pk) -> Response:
     )
 
 
+@api_view(['GET'])
+def are_homies_ready(request, hangout_pk):
+    hangout = get_object_or_404(HangoutSession, pk=hangout_pk)
+    return Response(
+        data={"areHomiesReady": hangout.are_homies_ready()},
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['POST'])
+def ready_up_homie(request):
+    user = extract_user(request.data)
+    user.is_ready = True
+    return Response(data={"message": f"homie {user.username} readied up"},
+                    status=status.HTTP_202_ACCEPTED)
+
+
 # @login_required
 @api_view(['POST'])
 def vote_on_option(request, pk) -> Response:
@@ -211,33 +228,32 @@ def vote_on_option(request, pk) -> Response:
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 
-
-@api_view(['GET', 'PUT', 'DELETE'])
-# @permission_classes((permissions.AllowAny,))
-def decision_detail(request, pk) -> Response:
-    """
-    Retrieve, update, or delete a Decision object.
-    """
-    try:
-        decision = Decision.objects.get(pk=pk)
-    except Decision.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == "PUT":
-        # Update an existing decision
-        serializer = DecisionSerializer(decision, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-    elif request.method == "GET":
-        # Get a decision
-        serializer = DecisionSerializer(decision)
-        return Response(serializer.data, status.HTTP_200_OK)
-    elif request.method == "DELETE":
-        # Delete a decision
-        decision.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+# @api_view(['GET', 'PUT', 'DELETE'])
+# # @permission_classes((permissions.AllowAny,))
+# def decision_detail(request, pk) -> Response:
+#     """
+#     Retrieve, update, or delete a Decision object.
+#     """
+#     try:
+#         decision = Decision.objects.get(pk=pk)
+#     except Decision.DoesNotExist:
+#         return Response(status=status.HTTP_404_NOT_FOUND)
+#
+#     if request.method == "PUT":
+#         # Update an existing decision
+#         serializer = DecisionSerializer(decision, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
+#     elif request.method == "GET":
+#         # Get a decision
+#         serializer = DecisionSerializer(decision)
+#         return Response(serializer.data, status.HTTP_200_OK)
+#     elif request.method == "DELETE":
+#         # Delete a decision
+#         decision.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Vanilla Django Views
 # Create your views here.

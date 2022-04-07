@@ -16,16 +16,18 @@ urlpatterns = [
 
     # *** REST API URLs made by me (Function-based) ***
     # Decisions
-    path('api/decision/<int:pk>/', views.decision_detail),
+    # path('api/decision/<int:pk>/', views.decision_detail),
     path('api/decision-add/', views.add_decision),
     path('api/decision/<int:pk>/options/', views.get_options_for_decision),
     # Hangouts
     # path('api/hangout/<int:pk>/', views.get_hangout_detail),
     path('api/hangout/<int:pk>/decision/', views.get_decision_for_hangout),
+    path('api/hangout/<int:hangout_pk>/is-ready/', views.are_homies_ready),
     # Options
     path('api/option-add/<int:decision_pk>/', views.add_option),
     path('api/option-vote/<int:pk>/', views.vote_on_option),
     # Homies
+    path('api/homie/ready-up/', views.ready_up_homie),
     path('api/join-hangout/', views.api_join_hangout),
     path('api/join-hangout/<int:hangout_id>', views.api_join_hangout),
     path('api/user-exit/', views.logout_view),

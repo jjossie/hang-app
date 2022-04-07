@@ -104,6 +104,7 @@ class Homie(models.Model):
 
     username = models.CharField(max_length=100)
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    is_ready = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -151,6 +152,12 @@ class HangoutSession(models.Model):
         self.users.add(homie)
         print(f"Just added homie {homie.username} to session {self.id}")
         print(self.users.all())
+
+    def are_homies_ready(self):
+        for homie in self.users.all():
+            if not homie.is_ready:
+                return False
+        return True
 
     def get_invite_link(self):
         return reverse('startUserWithSession', args=(self.id,))

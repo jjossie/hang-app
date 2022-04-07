@@ -53,9 +53,25 @@ export class Session {
                 }
             })
             .catch(e => {
-                console.log("ok something really went wrong: ");
+                console.log("ok something really went wrong. Maybe the server's off?: ");
                 console.log(e);
             });
+    }
+
+    /**
+     * Tell the server that this homie is ready to vote
+     * @returns {Promise<*>}
+     */
+    async readyUpHomie(){
+        const url = baseApiUrl + "homie/ready-up/";
+        return await this.djangoFetch(url, 'POST', {},
+            "Failed to Ready Up");
+    }
+
+    async areHomiesReady() {
+        const url = baseApiUrl + "hangout/" + this.hangoutId + "/is-ready/";
+        return await this.djangoFetch(url, 'GET', null,
+            "Could not check if the homies are ready");
     }
 
     /**
@@ -150,8 +166,8 @@ export class Session {
                 sessionBody.hangoutId = this.hangoutId;
             requestOptions.body = JSON.stringify(sessionBody);
         }
-        console.log(`DjangoFetch(): Sending the following request:`);
-        console.log(requestOptions);
+        // console.log(`DjangoFetch(): Sending the following request:`);
+        // console.log(requestOptions);
         const response = await fetch(url, requestOptions);
         if (response.ok)
             return await response.json();
