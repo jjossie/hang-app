@@ -154,7 +154,6 @@ export class SuggestController extends Controller {
     }
 
     refreshView() {
-        console.log("RefreshView() called");
         // Get the Decision Title
         this.session.getHangoutDecision()
             .then(data => {
@@ -169,8 +168,6 @@ export class SuggestController extends Controller {
                     .then(jsonData => {
                         // Display all the options
                         listContainer.innerHTML = "";
-                        console.log("JSON DATA: ");
-                        console.log(jsonData);
                         for (let option of jsonData['options']) {
                             // console.log(option);
                             listContainer.appendChild(renderOptionListItem(option));
@@ -216,10 +213,10 @@ export class SuggestController extends Controller {
             console.log("Readying up on the frontend");
             this.session.readyUpHomie()
                 .then((response) => {
-                    console.log(response);
-                    console.log("Readied up on the backend");
-                    thisInstance.ready = true;
-                    thisInstance.refresh();
+                    if (response.areHomiesReady)
+                        console.log("Readied up on the backend");
+                        thisInstance.ready = true;
+                        thisInstance.refresh();
                 })
                 .catch(e => {
                     console.log(e);

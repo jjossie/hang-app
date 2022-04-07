@@ -158,9 +158,7 @@ class HangoutSession(models.Model):
         print(self.users.all().values())
 
     def are_homies_ready(self):
-        print("Checking if the homies are ready:")
         for homie in self.users.all():
-            print(f"{homie.username} is ready: {homie.is_ready}")
             if not homie.is_ready:
                 return False
         return True

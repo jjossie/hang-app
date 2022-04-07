@@ -203,7 +203,6 @@ def are_homies_ready(request, hangout_pk):
 def ready_up_homie(request):
     user = extract_user(request.data)
     user.ready_up()
-    print(f"View ready_up_homie(): user {user} is ready: {user.is_ready}")
     return Response(data={"message": f"homie {user.username} readied up"},
                     status=status.HTTP_202_ACCEPTED)
 
