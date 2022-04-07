@@ -117,7 +117,7 @@ export class Session {
     async djangoFetch(url, method, body, errorMessage) {
 
         let csrfToken = Cookies.get('csrftoken');
-        console.log(csrfToken);
+        // console.log(csrfToken);
         // Attach the locally stored Homie ID and Hangout ID if we have em.
         let requestOptions = {
             method: method,

@@ -142,9 +142,27 @@ def get_decision_for_hangout(request, pk) -> Response:
     # serializer = HangoutSerializer(hangout)
     decision = hangout.decision_set.all()[0]
     serializer = DecisionSerializer(decision)
+    response_data = serializer.data
+    response_data['decisionId'] = decision.pk
     return Response(
         # data=JSONRenderer().render(serializer.data),
-        data=serializer.data,
+        data=response_data,
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['GET'])
+def get_options_for_decision(request, pk) -> Response:
+    decision = get_object_or_404(Decision, pk=pk)
+    options = decision.option_set.all()
+    response_data = {
+        "options": []
+    }
+    for option in options:
+        serializer = OptionSerializer(option)
+        response_data["options"].append(serializer.data)
+    return Response(
+        data=response_data,
         status=status.HTTP_200_OK
     )
 
