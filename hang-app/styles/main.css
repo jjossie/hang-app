@@ -65,24 +65,6 @@ body {
     white-space: nowrap;
 }
 
-.optionDetailCard {
-    background-color: var(--neutral);
-    border-radius: 20px;
-    width: 75%;
-    height: 80%;
-    margin: auto;
-    box-shadow: 0 2px 5px 0 var(--dark-blue);
-    padding: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.optionText {
-    font-weight: 400;
-    font-size: 20pt;
-    text-align: center;
-}
 
 #suggest__submitSuggestionButton {
     width: 36px;
@@ -146,3 +128,37 @@ input[type=text] {
     /*width: 80%;*/
 }
 
+h2 {
+    text-align: center;
+}
+
+
+
+/**
+Component Styles
+ */
+
+.optionDetailCard {
+    background-color: var(--neutral);
+    border-radius: 20px;
+    width: 75%;
+    height: 80%;
+    margin: auto;
+    box-shadow: 0 2px 5px 0 var(--dark-blue);
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.optionText {
+    font-weight: 400;
+    font-size: 20pt;
+    text-align: center;
+}
+
+.optionListItem{
+    display: flex;
+    flex-direction: row;
+
+}

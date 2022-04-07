@@ -14,8 +14,9 @@ import {
     displayErrorToast,
     getElement
 } from "./utilities.js"
+import {renderOptionListItem} from "./components.js";
 
-const REFRESH_INTERVAL = 500;
+const REFRESH_INTERVAL = 500000000;
 
 class Controller {
 
@@ -151,19 +152,21 @@ export class SuggestController extends Controller {
         // Get the Decision Title
         this.session.getHangoutDecision()
             .then(data => {
-                console.log(data);
                 this.decision = data;
                 // Display the title
                 getElement("suggest__decisionTitle").innerHTML = data['decisionText'];
             })
             .then(() => {
-                console.log(this.decision);
-                console.log(this.decision['decisionId']);
+                const listContainer = getElement("suggest__optionList");
                 // Get all the options
                 this.session.getOptionsForDecision(this.decision['decisionId'])
                     .then(jsonData => {
+                        listContainer.innerHTML = "";
+                        console.log("JSON DATA: ");
+                        console.log(jsonData);
                         for (let option of jsonData['options']) {
-                            console.log(option);
+                            // console.log(option);
+                            listContainer.appendChild(renderOptionListItem(option));
                         }
                     })
             })
