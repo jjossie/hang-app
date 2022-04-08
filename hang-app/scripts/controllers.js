@@ -14,12 +14,13 @@ import {
     displayErrorToast,
     getElement
 } from "./utilities.js"
-import {renderOptionCard, renderOptionListItem} from "./components.js";
+import {renderOptionCard, renderOptionListItem, renderResultsCard} from "./components.js";
 
 const REFRESH_INTERVAL = 5000;
 
 class Controller {
     root;
+
     constructor(session) {
         this.session = session;
     }
@@ -174,11 +175,7 @@ export class SuggestController extends Controller {
                         }
                     })
             })
-            .catch(e => {
-                if (e instanceof ApiError)
-                    displayErrorToast(e.message);
-                console.log(e);
-            });
+            .catch(catchError);
         if (this.ready) {
             const readyButton = getElement("suggest__readyButton");
             readyButton.innerHTML = "Waiting for others...";
@@ -261,30 +258,30 @@ export class VoteController extends Controller {
         super(session);
         this.decision = null;
         this.options = [];
-        this.currentOptionCard = null;
         this.currentOption = null;
     }
 
-    refreshView(){
+    refreshView() {
         let allVoted = true;
-        for (let op of this.options){
-            if (!op.voted){
+        for (let op of this.options) {
+            if (!op.voted) {
                 allVoted = false;
                 this.currentOption = op;
             }
         }
-        if (allVoted){
+        if (allVoted) {
             // all done bruv
             navigate("result");
+        } else {
+            // Display the option Card
+            let optionCard = renderOptionCard(this.currentOption.optionText);
+            console.log("Option Card: ");
+            console.log(optionCard);
+            this.currentOptionCard = optionCard;
+            this.root.innerHTML = "";
+            this.root.appendChild(optionCard);
+            this.registerListeners();
         }
-        // Display the option Card
-        let optionCard = renderOptionCard(this.currentOption.optionText);
-        console.log("Option Card: ");
-        console.log(optionCard);
-        this.currentOptionCard = optionCard;
-        this.root.innerHTML = "";
-        this.root.appendChild(optionCard);
-        this.registerListeners();
     }
 
     registerListeners() {
@@ -319,6 +316,7 @@ export class VoteController extends Controller {
         this.session.getHangoutDecision()
             .then(resultDecision => {
                 this.decision = resultDecision;
+                // Get the options for this decision
                 this.session.getOptionsForDecision(this.decision['decisionId'])
                     .then(resultOptions => {
                         // Process the options from the server
@@ -334,18 +332,63 @@ export class VoteController extends Controller {
                         });
                         this.refreshView();
                     })
-            });
+                    .catch(e => {
+                        if (e instanceof ApiError)
+                            displayErrorToast(e.message);
+                        console.log(e);
+                    });
+            })
+            .catch(catchError);
     }
 
 }
 
+
 export class ResultController extends Controller {
     constructor(session) {
         super(session);
+        this.decision = null;
+        this.winningOption = null;
+        this.timer = 0;
+    }
+
+    refreshView() {
+        if (this.winningOption) {
+            clearTimeout(this.timer);
+            this.root.innerHTML = "";
+            this.root.appendChild(
+                renderResultsCard(this.winningOption)
+            )
+        } else {
+            this.session.getResults(this.decision['decisionId'])
+                .then(result => {
+                    if (result["finished"]) {
+                        this.winningOption = result["winner"];
+                    }
+                })
+                .catch(catchError);
+            this.timer = window.setTimeout(() => {
+                this.refreshView();
+            }, REFRESH_INTERVAL);
+        }
     }
 
     setup() {
+        this.session.getHangoutDecision()
+            .then(resultDecision => {
+                this.decision = resultDecision;
+                this.refreshView()
+            })
+            .catch(catchError);
 
     }
 
+}
+
+function catchError() {
+    return e => {
+        if (e instanceof ApiError)
+            displayErrorToast(e.message);
+        console.log(e);
+    };
 }

@@ -85,7 +85,8 @@ export function renderVotePage() {
 export function renderResultPage() {
     let container = document.createElement("div");
     container.innerHTML = /*html*/ `
-    <div class="resultContainer box">
+    <div class="resultContainer">
+        Waiting on results...
     </div>
     `;
     return container;

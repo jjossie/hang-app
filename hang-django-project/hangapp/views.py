@@ -228,6 +228,28 @@ def vote_on_option(request, pk) -> Response:
         return Response(data=serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def get_results(request, decision_pk) -> Response:
+    decision = get_object_or_404(Decision, pk=decision_pk)
+    if not decision.voting_finished():
+        # Voting is not finished
+        return Response(
+            data={"finished": False},
+            status=status.HTTP_204_NO_CONTENT
+        )
+    else:
+        # Voting is finished, return results
+        winner = decision.get_winner()
+        option_serializer = OptionSerializer(winner)
+        return Response(
+            data={
+                "finished": True,
+                "winner": option_serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
 # @api_view(['GET', 'PUT', 'DELETE'])
 # # @permission_classes((permissions.AllowAny,))
 # def decision_detail(request, pk) -> Response:

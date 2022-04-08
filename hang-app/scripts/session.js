@@ -24,6 +24,12 @@ export class Session {
         return this.username;
     }
 
+
+    //
+    // TODO REFACTOR
+    // some of these could maybe be made synchronous, since the logic for handling
+    // the .then() and .catch() stuff might be more session/viewmodel/repository related.
+
     /**
      * Tells the backend to join a user to a hangout. Also creates the user if they
      * did not exist in the database already. If a hangoutId is not specified, it will
@@ -131,6 +137,11 @@ export class Session {
         return await this.djangoFetch(url, 'POST', body, "could not vote on option");
     }
 
+    async getResults(decisionId){
+        const url = baseApiUrl + "results/" + decisionId + "/";
+        return await this.djangoFetch(url, 'GET', null,
+            "Could not get results");
+    }
 
     /**
      * Helper function for performing fetch operations on the API which

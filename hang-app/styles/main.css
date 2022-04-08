@@ -134,6 +134,7 @@ h2 {
 
 button, button:hover, button:focus {
     border-color: transparent;
+    font-family: "M PLUS 1p", sans-serif;
 }
 
 
@@ -183,4 +184,14 @@ Component Styles
     display: flex;
     flex-direction: row;
 
+}
+
+.resultsContainer, .resultsContainer>div {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 10pt;
 }

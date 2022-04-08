@@ -19,3 +19,14 @@ export function renderOptionListItem(option) {
     `;
     return element;
 }
+
+export function renderResultsCard(winningOption) {
+    const element = document.createElement("div");
+    element.classList.add("resultsContainer");
+    element.innerHTML = /*html*/ `
+        <h4>Winning Option:</h4>
+        <h2 id="vote__optionText" class="optionText">${winningOption.optionText}</h2>
+        <button class="buttonMedium">Start Over</button>
+    `;
+    return element;
+}

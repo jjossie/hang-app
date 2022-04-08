@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/decision/<int:pk>/options/', views.get_options_for_decision),
     path('api/option-add/<int:decision_pk>/', views.add_option),
     path('api/option-vote/<int:pk>/', views.vote_on_option),
+    path('api/results/<int:decision_pk>/', views.get_results),
     # Homies
     path('api/homie/ready-up/', views.ready_up_homie),
     path('api/join-hangout/', views.api_join_hangout),
