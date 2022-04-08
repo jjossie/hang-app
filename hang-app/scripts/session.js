@@ -62,7 +62,7 @@ export class Session {
      * Tell the server that this homie is ready to vote
      * @returns {Promise<*>}
      */
-    async readyUpHomie(){
+    async readyUpHomie() {
         const url = baseApiUrl + "homie/ready-up/";
         return await this.djangoFetch(url, 'POST', {},
             "Failed to Ready Up");
@@ -105,6 +105,16 @@ export class Session {
             "Failed to get Options for Decision");
     }
 
+
+    async addOptionForDecision(decisionId, optionText) {
+        const url = baseApiUrl + "option-add/" + decisionId + "/";
+        const body = {
+            "optionText": optionText
+        }
+        return await this.djangoFetch(url, 'POST', body,
+            `Failed to add Option for Decision ${decisionId}`);
+    }
+
     /**
      * API Call to have a user vote on a particular option.
      * @param optionId The option to vote on.
@@ -121,14 +131,6 @@ export class Session {
         return await this.djangoFetch(url, 'POST', body, "could not vote on option");
     }
 
-    async addOptionForDecision(decisionId, optionText) {
-        const url = baseApiUrl + "option-add/" + decisionId + "/";
-        const body = {
-            "optionText": optionText
-        }
-        return await this.djangoFetch(url, 'POST', body,
-            `Failed to add Option for Decision ${decisionId}`);
-    }
 
     /**
      * Helper function for performing fetch operations on the API which

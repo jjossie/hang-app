@@ -147,8 +147,16 @@ Component Styles
     box-shadow: 0 2px 5px 0 var(--dark-blue);
     padding: 30px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.optionDetailCard>h2 {
+    flex-grow: 1.5;
+    vertical-align: center;
+}
+.buttonVote {
+    flex-grow: 1;
 }
 
 .optionText {

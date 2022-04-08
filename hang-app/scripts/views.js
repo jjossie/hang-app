@@ -77,7 +77,7 @@ export function renderSuggestPage() {
 export function renderVotePage() {
     let container = document.createElement("div");
     container.innerHTML = /*html*/ `
-
+        
     `;
     return container;
 }

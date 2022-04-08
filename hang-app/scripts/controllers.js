@@ -14,12 +14,12 @@ import {
     displayErrorToast,
     getElement
 } from "./utilities.js"
-import {renderOptionListItem} from "./components.js";
+import {renderOptionCard, renderOptionListItem} from "./components.js";
 
 const REFRESH_INTERVAL = 5000;
 
 class Controller {
-
+    root;
     constructor(session) {
         this.session = session;
     }
@@ -215,8 +215,8 @@ export class SuggestController extends Controller {
                 .then((response) => {
                     if (response.areHomiesReady)
                         console.log("Readied up on the backend");
-                        thisInstance.ready = true;
-                        thisInstance.refresh();
+                    thisInstance.ready = true;
+                    thisInstance.refresh();
                 })
                 .catch(e => {
                     console.log(e);
@@ -230,7 +230,7 @@ export class SuggestController extends Controller {
             this.session.areHomiesReady()
                 .then(result => {
                     console.log(result);
-                    if (result['areHomiesReady']){
+                    if (result['areHomiesReady']) {
                         console.log("Everyone's ready!");
                         // Clear timers
                         this.timeoutIds.forEach(id => {
@@ -259,10 +259,58 @@ export class SuggestController extends Controller {
 export class VoteController extends Controller {
     constructor(session) {
         super(session);
+        this.decision = null;
+        this.options = [];
+        this.currentOptionCard = null;
+        this.currentOption = null;
+    }
+
+    refreshView(){
+        if (this.options.length === 0){
+            return;
+        }
+        // Display the option Card
+        let optionCard = renderOptionCard(this.options[0].optionText);
+        console.log("Option Card: ");
+        console.log(optionCard);
+        this.currentOptionCard = optionCard;
+        this.root.innerHTML = "";
+        this.root.appendChild(optionCard);
+    }
+
+    registerListeners() {
+        addClickListener("vote__YesButton", e => {
+            e.preventDefault();
+            this.session.voteOnOption(this.currentOption.optionId,
+                2, 0)  // TODO implement timePassed
+                .then(() => {
+
+                });
+        });
+        addClickListener("vote__NoButton", e => {
+            e.preventDefault();
+            this.session.voteOnOption(this.currentOption.optionId,
+                0, 0) // TODO implement timePassed
+                .then(() => {
+
+                });
+        });
     }
 
     setup() {
-
+        console.log(this.root)
+        // Initialize Data for Decision and Options
+        this.session.getHangoutDecision()
+            .then(resultDecision => {
+                this.decision = resultDecision;
+                this.session.getOptionsForDecision(this.decision['decisionId'])
+                    .then(resultOptions => {
+                        this.options = resultOptions['options'];
+                        console.log(`Options:`)
+                        console.log(this.options);
+                        this.refreshView();
+                    })
+            });
     }
 
 }

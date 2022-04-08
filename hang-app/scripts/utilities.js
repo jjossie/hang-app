@@ -33,26 +33,15 @@ export function addClickListener(id, callback){
 export function displayPage(page, controller) {
     const root = document.getElementById("contentContainer");
     root.innerHTML = "";
-    root.appendChild(page());
+    let rootPage = page();
+    root.appendChild(rootPage);
+    controller.root = rootPage;
     controller.setup();
 }
 
 export function overwritePage(page){
     const root = document.getElementsByTagName("body")[0];
     root.innerHTML = page;
-}
-
-
-/// API Calls
-export async function getAllOptions() {
-    const url = baseApiUrl + "options/";
-
-    const response = await djangoFetch(url, 'GET');
-    if (response.ok) {
-        return await response.json();
-    } else {
-        throw Error(`Login failed due to:\n ${response.error()}`);
-    }
 }
 
 

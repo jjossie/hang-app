@@ -13,10 +13,11 @@ class VoteDetailSerializer(serializers.Serializer):
 class OptionSerializer(serializers.ModelSerializer):
     decision = serializers.PrimaryKeyRelatedField(many=False,
                                                   queryset=Decision.objects.all())
+    id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Option
-        fields = ['optionText', 'decision']
+        fields = ['id', 'optionText', 'decision']
 
 
 class DecisionSerializer(serializers.ModelSerializer):
