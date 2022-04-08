@@ -152,6 +152,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://127.0.0.1:5500',
     'http://*.127.0.0.1:5500',
     'https://*.127.0.0.1:5500',
+
+    'https://localhost',
+    'http://localhost:63342',
+    'http://localhost:5500',
+    'https://localhost:5500',
+    'http://*.localhost:5500',
+    'https://*.localhost:5500',
 ]
 # CSRF_COOKIE_SECURE = True
 

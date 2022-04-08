@@ -42,7 +42,7 @@ export class Session {
         let url = baseApiUrl + "join-hangout/";
         // Add the hangoutID to the request if necessary
         if (hangoutId)
-            url += hangoutId
+            url += hangoutId + "/";
 
         const body = {
             "username": this.username

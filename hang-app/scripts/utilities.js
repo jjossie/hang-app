@@ -4,9 +4,11 @@ import Cookies from './js.cookie.mjs';
 export function displayErrorToast(errorMessage){
     const box = getElement("errorBox");
     box.innerHTML = errorMessage;
-    box.hidden = false;
+    // box.hidden = false;
+    box.classList.remove('hide');
     window.setTimeout(() => {
-        box.hidden = true;
+        // box.hidden = true;
+        box.classList.add('hide');
         box.innerHTML = "";
     }, 3000);
 }
@@ -27,15 +29,15 @@ export function getElement(id) {
 
 export function addClickListener(id, callback){
     getElement(id).addEventListener('touchend', callback);
-    // getElement(id).addEventListener('click', callback);
+    getElement(id).addEventListener('click', callback);
 }
 
 export function displayPage(page, controller) {
     const root = document.getElementById("contentContainer");
     root.innerHTML = "";
-    let rootPage = page();
-    root.appendChild(rootPage);
-    controller.root = rootPage;
+    let newPage = page();
+    root.appendChild(newPage);
+    controller.root = newPage;
     controller.setup();
 }
 
@@ -43,38 +45,3 @@ export function overwritePage(page){
     const root = document.getElementsByTagName("body")[0];
     root.innerHTML = page;
 }
-
-
-/// Utility functions
-
-// Can't figure this one out. Idk how to work with XMLHttpRequests.
-// function djangoFetchX(url, method, body) {
-//     const csrfToken = Cookies.get('csrftoken');
-//     console.log(`csrftoken: ${csrfToken}`);
-//     const requestOptions = {
-//         method: method,
-//         credentials: 'include',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': csrfToken,
-//             // 'mode': 'same-origin'
-//             // 'mode': 'no-cors'
-//         },
-//         body: JSON.stringify(body)
-//     };
-//
-//     let xhr = new XMLHttpRequest();
-//     xhr.open(method, url, true);
-//     xhr.setRequestHeader('Content-Type', 'application/json');
-//     xhr.setRequestHeader('X-CSRFToken', csrfToken);
-//     xhr.withCredentials = true;
-//
-//     xhr.send();
-//     return xhr.response;
-// }
-
-// function getCookie(name) {
-//     const value = `; ${document.cookie}`;
-//     const parts = value.split(`; ${name}=`);
-//     if (parts.length === 2) return parts.pop().split(';').shift();
-// }

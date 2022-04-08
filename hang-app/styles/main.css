@@ -20,15 +20,31 @@ body {
 
 #errorBox {
     position: fixed;
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
     background-color: var(--medium-red);
-    height: 40px;
-    border-radius: 20px;
+    height: 36px;
+    line-height: 36px;
+    vertical-align: center;
+    border-radius: 18px;
     color: var(--neutral);
     text-align: center;
+
+
 }
+#errorBox{
+    opacity: 100%;
+    transition-property: opacity, transform;
+    transition-duration: 250ms;
+    transition-timing-function: ease;
+}
+
+#errorBox.hide {
+    opacity: 0;
+    transform: translateY(48px);
+}
+
 
 #contentContainer > div {
     height: 100%;
@@ -36,7 +52,36 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    position: fixed;
+    opacity: 100%;
+    transition-property: opacity;
+    transition-timing-function: ease;
+    transition-duration: 0.5s;
 }
+
+#splashScreen {
+    text-align: center;
+    opacity: 100%;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+}
+
+/*div[oldPage="true"] {*/
+/*    opacity: 0;*/
+/*    !*transform: translateX(-300px);*!*/
+/*}*/
+/*div[newPage="true"] {*/
+/*    opacity: 0;*/
+/*    !*transform: translateX(300px);*!*/
+/*}*/
+/*div[oldPage="false"], div[newPage="false"]{*/
+/*    opacity: 100%;*/
+/*    transition-property: opacity;*/
+/*    transition-duration: 250ms;*/
+/*    transition-timing-function: ease;*/
+/*    transition-delay: 60ms;*/
+/*}*/
 
 .flexDown {
     display: flex;
@@ -71,6 +116,7 @@ body {
     height: 36px;
     border-radius: 18px;
     background-color: var(--medium-red);
+    color: var(--neutral);
     padding: 0;
     margin: 0;
     border: transparent;
@@ -101,6 +147,7 @@ Generic Styles
     text-align: center;
     font-weight: lighter;
 }
+
 .buttonLarge {
     box-shadow: 0 2px 5px 0 var(--dark-blue);
     background-color: var(--medium-blue);
@@ -142,7 +189,7 @@ button, button:hover, button:focus {
 Component Styles
  */
 
-.optionDetailCard>form {
+.optionDetailCard > form {
     background-color: var(--neutral);
     border-radius: 20px;
     width: 75%;
@@ -155,10 +202,12 @@ Component Styles
     justify-content: center;
     align-items: center;
 }
-.optionDetailCard>h2 {
+
+.optionDetailCard > h2 {
     flex-grow: 1.5;
     vertical-align: center;
 }
+
 .buttonVote {
     flex-grow: 1;
     width: 70%;
@@ -170,6 +219,7 @@ Component Styles
 #vote__YesButton {
     background-color: var(--medium-blue);
 }
+
 #vote__NoButton {
     background-color: var(--medium-red);
 }
@@ -180,13 +230,13 @@ Component Styles
     text-align: center;
 }
 
-.optionListItem{
+.optionListItem {
     display: flex;
     flex-direction: row;
 
 }
 
-.resultsContainer, .resultsContainer>div {
+.resultsContainer, .resultsContainer > div {
     display: flex;
     flex-direction: column;
     align-content: center;

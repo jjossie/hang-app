@@ -16,7 +16,7 @@ import {
 } from "./utilities.js"
 import {renderOptionCard, renderOptionListItem, renderResultsCard} from "./components.js";
 
-const REFRESH_INTERVAL = 5000;
+const REFRESH_INTERVAL = 1000;
 
 class Controller {
     root;
@@ -62,15 +62,16 @@ export class JoinController extends Controller {
         addClickListener("join__joinHangoutButton", (e) => {
             // API Request with the Join Code
             const inputJoinCode = getElement("join__codeText").value
-            this.session.joinHangout(inputJoinCode)
-                .then(() => {
-                    navigate("pickDecision");
-                })
-                .catch((e) => {
-                    console.log(e);
-                    if (e instanceof ApiError)
-                        displayErrorToast("Join Code Invalid");
-                });
+            if (inputJoinCode) {
+                this.session.joinHangout(inputJoinCode)
+                    .then(response => {
+                        console.log(response);
+                        navigate("pickDecision");
+                    })
+                    .catch(catchError);
+            } else {
+                displayErrorToast("Enter a join code");
+            }
         });
     }
 
@@ -85,20 +86,19 @@ export class LoginController extends Controller {
         addClickListener("login__loginButton", (e) => {
             // Set session username
             const inputUsername = getElement("login__nameText").value;
-            this.session.setUsername(inputUsername);
-            if (this.session.startingNewSession)
-                this.session.joinHangout()
-                    .then(() => {
-                        navigate("pickDecision");
-                    })
-                    .catch(e => {
-                        if (e instanceof ApiError) {
-                            displayErrorToast(e.message);
-                        }
-                        console.log(e);
-                    });
-            else
-                navigate("join");
+            if (inputUsername) {
+                this.session.setUsername(inputUsername);
+                if (this.session.startingNewSession)
+                    this.session.joinHangout()
+                        .then(() => {
+                            navigate("pickDecision");
+                        })
+                        .catch(catchError);
+                else
+                    navigate("join");
+            } else {
+                displayErrorToast("Enter a username")
+            }
         });
     }
 
