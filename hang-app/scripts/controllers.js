@@ -266,33 +266,49 @@ export class VoteController extends Controller {
     }
 
     refreshView(){
-        if (this.options.length === 0){
-            return;
+        let allVoted = true;
+        for (let op of this.options){
+            if (!op.voted){
+                allVoted = false;
+                this.currentOption = op;
+            }
+        }
+        if (allVoted){
+            // all done bruv
+            navigate("result");
         }
         // Display the option Card
-        let optionCard = renderOptionCard(this.options[0].optionText);
+        let optionCard = renderOptionCard(this.currentOption.optionText);
         console.log("Option Card: ");
         console.log(optionCard);
         this.currentOptionCard = optionCard;
         this.root.innerHTML = "";
         this.root.appendChild(optionCard);
+        this.registerListeners();
     }
 
     registerListeners() {
+        getElement("vote__voteForm").addEventListener('submit', e => {
+            e.preventDefault();
+        });
         addClickListener("vote__YesButton", e => {
             e.preventDefault();
-            this.session.voteOnOption(this.currentOption.optionId,
+            this.session.voteOnOption(this.currentOption['id'],
                 2, 0)  // TODO implement timePassed
-                .then(() => {
-
+                .then(result => {
+                    console.log(result);
+                    this.currentOption.voted = true;
+                    this.refreshView();
                 });
         });
         addClickListener("vote__NoButton", e => {
             e.preventDefault();
-            this.session.voteOnOption(this.currentOption.optionId,
+            this.session.voteOnOption(this.currentOption['id'],
                 0, 0) // TODO implement timePassed
-                .then(() => {
-
+                .then(result => {
+                    console.log(result);
+                    this.currentOption.voted = true;
+                    this.refreshView();
                 });
         });
     }
@@ -305,9 +321,17 @@ export class VoteController extends Controller {
                 this.decision = resultDecision;
                 this.session.getOptionsForDecision(this.decision['decisionId'])
                     .then(resultOptions => {
+                        // Process the options from the server
                         this.options = resultOptions['options'];
                         console.log(`Options:`)
                         console.log(this.options);
+                        if (this.options.length > 0)
+                            this.currentOption = this.options[0];
+                        else
+                            return; // TODO fix this bruh idk there might be errors here
+                        this.options.map(option => {
+                            option.voted = false;
+                        });
                         this.refreshView();
                     })
             });

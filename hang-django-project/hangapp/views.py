@@ -222,10 +222,10 @@ def vote_on_option(request, pk) -> Response:
         except Exception as e:
             # TODO implement error messages to the user?
             print(e)
-        return Response({"vote_tally": option.get_score()},
+        return Response(data={"vote_tally": option.get_score()},
                         status=status.HTTP_201_CREATED)
     else:
-        return Response(serializer.errors,
+        return Response(data=serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)
 
 # @api_view(['GET', 'PUT', 'DELETE'])
