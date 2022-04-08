@@ -132,13 +132,16 @@ h2 {
     text-align: center;
 }
 
+button, button:hover, button:focus {
+    border-color: transparent;
+}
 
 
 /**
 Component Styles
  */
 
-.optionDetailCard {
+.optionDetailCard>form {
     background-color: var(--neutral);
     border-radius: 20px;
     width: 75%;
@@ -157,6 +160,17 @@ Component Styles
 }
 .buttonVote {
     flex-grow: 1;
+    width: 70%;
+    height: 48px;
+    border-radius: 24px;
+    border-color: transparent;
+}
+
+#vote__YesButton {
+    background-color: var(--medium-blue);
+}
+#vote__NoButton {
+    background-color: var(--medium-red);
 }
 
 .optionText {
