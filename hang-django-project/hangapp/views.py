@@ -17,7 +17,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer
 
 from .custom_config import *
-from .utilities import extract_user
+from .utilities import extract_homie
 
 
 # REST API Views
@@ -120,7 +120,7 @@ def add_decision(request) -> Response:
     data = request.data
     print(data)
     # I don't think we need the user, but we do need to strip the data
-    user = extract_user(data)
+    user = extract_homie(data)
     print(data)
     serializer = DecisionSerializer(data=data)
     if serializer.is_valid():
@@ -170,7 +170,7 @@ def get_options_for_decision(request, pk) -> Response:
 @api_view(['POST'])
 def add_option(request, decision_pk) -> Response:
     decision = get_object_or_404(Decision, pk=decision_pk)
-    user = extract_user(request.data)
+    user = extract_homie(request.data)
     try:
         option_text = request.data['optionText']
     except KeyError:
@@ -201,7 +201,7 @@ def are_homies_ready(request, hangout_pk):
 
 @api_view(['POST'])
 def ready_up_homie(request):
-    user = extract_user(request.data)
+    user = extract_homie(request.data)
     user.ready_up()
     return Response(data={"message": f"homie {user.username} readied up"},
                     status=status.HTTP_202_ACCEPTED)
@@ -216,7 +216,7 @@ def vote_on_option(request, pk) -> Response:
         print("Vote Detail serialized successfully")
         try:
             # This isn't done until the users stuff is figured out
-            homie = extract_user(request.data)
+            homie = extract_homie(request.data)
             print(homie)
             option.vote(homie, serializer.save())
         except Exception as e:

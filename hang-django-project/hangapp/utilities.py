@@ -1,7 +1,7 @@
 from .models import Homie
 
 
-def extract_user(data: dict):
+def extract_homie(data: dict):
     data.pop('hangoutId')
     homie_id = data.pop('homieId')
     if homie_id is not None:
